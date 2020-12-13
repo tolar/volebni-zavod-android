@@ -6,13 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
+
+        <Button
+            android:id="@+id/snemovna2013btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sněmovna 2013"
+             />
+
+        <Button
+            android:id="@+id/snemovna2017btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sněmovna 2017"
+             />
+    </LinearLayout>
+
+    />
+
+
+    />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

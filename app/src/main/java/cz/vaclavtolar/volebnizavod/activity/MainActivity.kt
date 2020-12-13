@@ -20,11 +20,11 @@ class MainActivity : AppCompatActivity() {
         val call: Call<List<Election>> = ServerService.getInstance().allElections
         call.enqueue(object: Callback < List < Election > > {
             override fun onResponse(call: Call<List<Election>>, response: Response<List<Election>>) {
-                TODO("Not yet implemented")
+                //TODO("Not yet implemented")
             }
 
             override fun onFailure(call: Call<List<Election>>, t: Throwable) {
-                TODO("Not yet implemented")
+                //TODO("Not yet implemented")
             }
         })
     }
