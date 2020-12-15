@@ -8,7 +8,8 @@ import retrofit2.http.GET;
 
 public interface ServerApi {
 
-    String BASE_URL = "https://volebnizavod.herokuapp.com/api/v1/";
+    //String BASE_URL = "https://volebnizavod.herokuapp.com/api/v1/";
+    String BASE_URL = "http://localhost:8080/api/v1/elections/";
 
     @GET("elections")
     Call<List<Election>> getAllElections();
