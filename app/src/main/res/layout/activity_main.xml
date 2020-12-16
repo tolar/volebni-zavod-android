@@ -10,25 +10,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.382">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/elections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10sp" />
 
         <Button
             android:id="@+id/snemovna2013btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sněmovna 2013"
-             />
+            android:layout_marginBottom="10sp"
+            android:text="Sněmovna 2013" />
 
         <Button
             android:id="@+id/snemovna2017btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sněmovna 2017"
-             />
+            android:layout_marginBottom="10sp"
+            android:text="Sněmovna 2017" />
     </LinearLayout>
 
     />
