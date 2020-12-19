@@ -10,6 +10,8 @@ public class Election {
 
     private String id;
 
+    private String name;
+
     @JsonDeserialize(using= LocalDateDeserializer.class)
     private LocalDate date;
 
@@ -23,6 +25,14 @@ public class Election {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getDate() {

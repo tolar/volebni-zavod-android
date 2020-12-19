@@ -2,9 +2,13 @@ package cz.vaclavtolar.volebnizavod.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.Election
@@ -14,9 +18,20 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var electionsAdapter: ElectionsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
+
+        electionsAdapter = ElectionsAdapter()
+        val itemsRecyler = findViewById<RecyclerView>(R.id.elections)
+        itemsRecyler.adapter = electionsAdapter
+        val layoutManager = LinearLayoutManager(this)
+        itemsRecyler.layoutManager = layoutManager
+
     }
 
     override fun onStart() {
@@ -27,32 +42,43 @@ class MainActivity : AppCompatActivity() {
                 call: Call<List<Election>>,
                 response: Response<List<Election>>
             ) {
-                Log.d("Data from server: {}", response.message())
-                //TODO("Not yet implemented")
+                Log.d("srv_call", "Successfully called server")
+                electionsAdapter.elections = response.body()!!
+                electionsAdapter.elections = electionsAdapter.elections.sortedByDescending { it.date }
+                electionsAdapter.notifyDataSetChanged()
             }
 
             override fun onFailure(call: Call<List<Election>>, t: Throwable) {
-                //TODO("Not yet implemented")
+                Log.e("srv_call", "Failed to call server", t)
             }
         })
     }
 
     class ElectionsAdapter : RecyclerView.Adapter<ElectionsAdapter.ViewHolder>() {
 
+        var elections: List<Election> = mutableListOf()
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            TODO("Not yet implemented")
+            val button = LayoutInflater.from(parent.context)
+                .inflate(R.layout.election_button, parent, false) as Button
+            return ViewHolder(button)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            TODO("Not yet implemented")
+            val itemView: View = holder.itemView
+            val button: Button = itemView.findViewById(R.id.button)
+            button.setText(elections.get(position).name)
+            if (position > 0) {
+                button.setBackgroundColor(itemView.resources.getColor(R.color.primaryLightColor))
+            }
         }
 
         override fun getItemCount(): Int {
-            TODO("Not yet implemented")
+            return elections.size
         }
 
-        class ViewHolder : RecyclerView.ViewHolder {
-            constructor(itemView: View): super(itemView)
+        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val button: Button = itemView.findViewById(R.id.button)
         }
 
     }
