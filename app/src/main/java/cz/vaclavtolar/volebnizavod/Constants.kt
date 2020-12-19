@@ -1,0 +1,6 @@
+package cz.vaclavtolar.volebnizavod
+
+object Constants {
+    const val ELECTION_ID = "ELECTION_ID"
+    const val ELECTION_NAME = "ELECTION_NAME"
+}

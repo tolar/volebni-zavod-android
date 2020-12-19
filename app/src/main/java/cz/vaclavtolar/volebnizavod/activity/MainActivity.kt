@@ -1,5 +1,7 @@
 package cz.vaclavtolar.volebnizavod.activity
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,9 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import cz.vaclavtolar.volebnizavod.Constants.ELECTION_ID
+import cz.vaclavtolar.volebnizavod.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.Election
 import cz.vaclavtolar.volebnizavod.service.ServerService
@@ -23,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
         electionsAdapter = ElectionsAdapter()
@@ -42,14 +44,15 @@ class MainActivity : AppCompatActivity() {
                 call: Call<List<Election>>,
                 response: Response<List<Election>>
             ) {
-                Log.d("srv_call", "Successfully called server")
+                Log.d("srv_call", "Successfully got elections from server")
                 electionsAdapter.elections = response.body()!!
-                electionsAdapter.elections = electionsAdapter.elections.sortedByDescending { it.date }
+                electionsAdapter.elections =
+                    electionsAdapter.elections.sortedByDescending { it.date }
                 electionsAdapter.notifyDataSetChanged()
             }
 
             override fun onFailure(call: Call<List<Election>>, t: Throwable) {
-                Log.e("srv_call", "Failed to call server", t)
+                Log.e("srv_call", "Failed to get elections server", t)
             }
         })
     }
@@ -71,15 +74,26 @@ class MainActivity : AppCompatActivity() {
             if (position > 0) {
                 button.setBackgroundColor(itemView.resources.getColor(R.color.primaryLightColor))
             }
+            button.setOnClickListener { startElectionActivity(itemView.context, position) }
+        }
+
+        private fun startElectionActivity(context: Context, position: Int) {
+            val intent = Intent(context, ElectionActivity::class.java).apply {
+                putExtra(ELECTION_ID, elections.get(position).id)
+                putExtra(ELECTION_NAME, elections.get(position).name)
+            }
+            context.startActivity(intent)
         }
 
         override fun getItemCount(): Int {
             return elections.size
         }
 
-        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val button: Button = itemView.findViewById(R.id.button)
-        }
+        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
 
     }
+
+
+
 }

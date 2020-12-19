@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import cz.vaclavtolar.volebnizavod.dto.Election;
+import cz.vaclavtolar.volebnizavod.dto.ElectionData;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -41,6 +42,10 @@ public class ServerService {
 
     public Call<List<Election>> getAllElections() {
         return serverApi.getAllElections();
+    }
+
+    public Call<ElectionData> getElection(int id) {
+        return serverApi.getElection(id);
     }
 
     @NotNull

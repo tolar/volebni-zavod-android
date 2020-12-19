@@ -1,7 +1,8 @@
-package cz.vaclavtolar.volebnizavod.dto;
+package cz.vaclavtolar.volebnizavod.dto
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Cr {
+class Cr {
+    var strana: List<Strana>? = null
 }
