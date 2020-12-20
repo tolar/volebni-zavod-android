@@ -2,8 +2,14 @@ package cz.vaclavtolar.volebnizavod.activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -63,6 +69,8 @@ class ElectionActivity : AppCompatActivity() {
             }
         })
     }
+
+
     class PartiesAdapter : RecyclerView.Adapter<PartiesAdapter.ViewHolder>() {
 
         var parties: List<Strana> = mutableListOf()
@@ -87,8 +95,18 @@ class ElectionActivity : AppCompatActivity() {
 
         class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-
     }
 
+    class StripeView constructor(context: Context, attributeSet: AttributeSet? = null)
+        : View(context, attributeSet) {
+
+        override fun onDraw(canvas: Canvas?) {
+            super.onDraw(canvas)
+            val paint = Paint()
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.MAGENTA);
+            canvas?.drawRect(0F,0F,100F,20F, paint)
+        }
+    }
 
 }

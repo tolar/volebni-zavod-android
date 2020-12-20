@@ -7,17 +7,28 @@
     android:layout_height="wrap_content"
     tools:context=".activity.ElectionActivity">
 
+    <view class="cz.vaclavtolar.volebnizavod.activity.ElectionActivity$StripeView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="200dp"
+        android:layout_height="10dp">
+    </view>
+
     <TextView
         android:id="@+id/party_name"
-        android:layout_width="172dp"
-        android:layout_height="111dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="[Politická strana]"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@id/party_votes_percents"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/party_votes_percents"
+        android:text="[26,77%]"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
