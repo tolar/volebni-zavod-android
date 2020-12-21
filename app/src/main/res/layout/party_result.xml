@@ -19,10 +19,12 @@
     <!--        >-->
     <!--    </view>-->
 
-    <TextView
+    <view
         android:id="@+id/party_stripe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        class="cz.vaclavtolar.volebnizavod.activity.ElectionActivity$StripeView"
+        android:layout_width="0dp"
+        android:layout_height="30sp"
+        app:layout_constraintHorizontal_weight="1"
         android:text="[Barevny pruh]"
         app:layout_constraintEnd_toStartOf="@+id/party_votes_percents"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -35,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="[26,77%]"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@id/party_stripe"

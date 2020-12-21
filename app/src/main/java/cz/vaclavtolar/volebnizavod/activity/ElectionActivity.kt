@@ -1,12 +1,9 @@
 package cz.vaclavtolar.volebnizavod.activity
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
-import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.AttributeSet
@@ -14,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -60,7 +56,8 @@ class ElectionActivity : AppCompatActivity() {
                 Log.d("srv_call", "Successfully got election detail from server")
                 partiesAdapter.parties = response.body()?.cr?.strana!!
                 partiesAdapter.parties =
-                    partiesAdapter.parties.sortedByDescending { it.hodnotystrana?.prochlasu }
+                    partiesAdapter.parties.sortedByDescending { it.nazstr }.sortedByDescending { it.hodnotystrana?.prochlasu }
+                partiesAdapter.maxVotesPercent = partiesAdapter.parties.maxByOrNull { it.hodnotystrana?.prochlasu!! }?.hodnotystrana?.prochlasu
                 partiesAdapter.notifyDataSetChanged()
             }
 
@@ -73,6 +70,7 @@ class ElectionActivity : AppCompatActivity() {
 
     class PartiesAdapter : RecyclerView.Adapter<PartiesAdapter.ViewHolder>() {
 
+        var maxVotesPercent: Double? = null
         var parties: List<Strana> = mutableListOf()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -85,8 +83,13 @@ class ElectionActivity : AppCompatActivity() {
             val itemView: View = holder.itemView
             val partyNameTextView: TextView = itemView.findViewById(R.id.party_name)
             partyNameTextView.setText(parties.get(position).nazstr)
+
             val partyVotesPercentTextView: TextView = itemView.findViewById(R.id.party_votes_percents)
             partyVotesPercentTextView.setText(parties.get(position).hodnotystrana?.prochlasu.toString())
+
+            val partyStripe: StripeView = itemView.findViewById(R.id.party_stripe)
+            partyStripe.votesPercent = parties.get(position).hodnotystrana?.prochlasu
+            partyStripe.maxVotesPercent = maxVotesPercent!!
         }
 
         override fun getItemCount(): Int {
@@ -97,16 +100,30 @@ class ElectionActivity : AppCompatActivity() {
 
     }
 
-    class StripeView constructor(context: Context, attributeSet: AttributeSet? = null)
+    class StripeView(
+        context: Context,
+        attributeSet: AttributeSet? = null
+    )
         : View(context, attributeSet) {
+
+        var maxVotesPercent: Double = 0.0
+        var votesPercent: Double? = null
+        private var viewHeight: Int = 0
+        private var viewWidth: Int = 0
 
         override fun onDraw(canvas: Canvas?) {
             super.onDraw(canvas)
             val paint = Paint()
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.RED);
-            //this.layoutParams.width = 200
-            canvas?.drawRect(0F,0F,100F,20F, paint)
+            val stripeWidth = (votesPercent?.div(maxVotesPercent))?.times(viewWidth!!)
+            canvas?.drawRect(0F,0F, stripeWidth?.toFloat()!!, viewHeight.toFloat(), paint)
+        }
+
+        override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+            super.onSizeChanged(w, h, oldw, oldh)
+            this.viewWidth = w
+            this.viewHeight = h
         }
     }
 
