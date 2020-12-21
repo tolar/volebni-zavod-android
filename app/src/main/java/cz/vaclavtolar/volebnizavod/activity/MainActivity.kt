@@ -16,6 +16,7 @@ import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.Election
 import cz.vaclavtolar.volebnizavod.service.ServerService
+import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_YEAR
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -79,8 +80,10 @@ class MainActivity : AppCompatActivity() {
 
         private fun startElectionActivity(context: Context, position: Int) {
             val intent = Intent(context, ElectionActivity::class.java).apply {
-                putExtra(ELECTION_ID, elections.get(position).id)
-                putExtra(ELECTION_NAME, elections.get(position).name)
+                val election = elections.get(position)
+                putExtra(ELECTION_ID, election.id)
+                putExtra(ELECTION_NAME, election.name)
+                putExtra(ELECTION_YEAR, election.date?.year)
             }
             context.startActivity(intent)
         }

@@ -1,9 +1,8 @@
-package cz.vaclavtolar.volebnizavod.util;
+package cz.vaclavtolar.volebnizavod.util
 
-import android.graphics.Color;
+import android.graphics.Color
 
-
-public enum Party {
+enum class Party(val color: Int) {
     ANO(Color.parseColor("#261060")),
     ODS(Color.parseColor("#004494")),
     PIRATI(Color.parseColor("#000000")),
@@ -13,11 +12,11 @@ public enum Party {
     KDU_CSL(Color.parseColor("#F9DA23")),
     TOP09(Color.parseColor("#993399")),
     STAN(Color.parseColor("#b6c932")),
-    SSO(Color.parseColor("#cccccc")),
-    SZ(Color.parseColor("#cccccc")),
+    SSO(Color.parseColor("#005F49")),
+    SZ(Color.parseColor("#009900")),
     ROZUMNI(Color.parseColor("#cccccc")),
     REALISTE(Color.parseColor("#cccccc")),
-    SPO(Color.parseColor("#cccccc")),
+    STRANA_PRAV_OBCANU(Color.parseColor("#996600")),
     SPORTOVCI(Color.parseColor("#cccccc")),
     DSSS(Color.parseColor("#cccccc")),
     SPR_RSC(Color.parseColor("#cccccc")),
@@ -34,16 +33,14 @@ public enum Party {
     UNIE_HAVEL_2017(Color.parseColor("#cccccc")),
     OBCANE_2011(Color.parseColor("#cccccc")),
     NAROD_SOBE(Color.parseColor("#cccccc")),
-    CNF(Color.parseColor("#cccccc"));
+    CNF(Color.parseColor("#cccccc")),
+    HLAVA_VZHURU(Color.parseColor("#cccccc")),
+    ZMENA(Color.parseColor("#cccccc")),
+    STRANA_SOUKROMNIKU(Color.parseColor("#cccccc")),
+    SUVERENITA_STRANA_ROZUMU(Color.parseColor("#333333")),
+    AKTIV_NEZAVISLYCH_OBCANU(Color.parseColor("#cccccc")),
+    LEV21(Color.parseColor("#cccccc")),
+    KORUNA_CESKA(Color.parseColor("#cccccc")),
 
-    private final Integer color;
-
-    public Integer getColor() {
-        return color;
-    }
-
-    Party(Integer color) {
-        this.color = color;
-    }
 
 }

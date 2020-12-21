@@ -6,6 +6,8 @@
     <color name="primaryDarkColor">#9a0007</color>
     <color name="primaryTextColor">#ffffff</color>
 
+    <color name="blackText">#000000</color>
+
     <color name="anoColor">#261060</color>
     <color name="odsColor">#004494</color>
     <color name="piratiColor">#000000</color>
