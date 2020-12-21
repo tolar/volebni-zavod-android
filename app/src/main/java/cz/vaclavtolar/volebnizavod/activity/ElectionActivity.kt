@@ -12,14 +12,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import cz.vaclavtolar.volebnizavod.Constants.ELECTION_ID
-import cz.vaclavtolar.volebnizavod.Constants.ELECTION_NAME
+import com.fasterxml.jackson.databind.util.ClassUtil.getPackageName
+import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
+import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.ElectionData
 import cz.vaclavtolar.volebnizavod.dto.Strana
 import cz.vaclavtolar.volebnizavod.service.ServerService
+import cz.vaclavtolar.volebnizavod.util.ElectionPartyMappings
+import cz.vaclavtolar.volebnizavod.util.Party
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -88,8 +93,8 @@ class ElectionActivity : AppCompatActivity() {
             partyVotesPercentTextView.setText(parties.get(position).hodnotystrana?.prochlasu.toString())
 
             val partyStripe: StripeView = itemView.findViewById(R.id.party_stripe)
-            partyStripe.votesPercent = parties.get(position).hodnotystrana?.prochlasu
             partyStripe.maxVotesPercent = maxVotesPercent!!
+            partyStripe.strana = parties.get(position)
         }
 
         override fun getItemCount(): Int {
@@ -106,8 +111,8 @@ class ElectionActivity : AppCompatActivity() {
     )
         : View(context, attributeSet) {
 
-        var maxVotesPercent: Double = 0.0
-        var votesPercent: Double? = null
+        var maxVotesPercent: Double? = null
+        var strana: Strana? = null
         private var viewHeight: Int = 0
         private var viewWidth: Int = 0
 
@@ -115,8 +120,9 @@ class ElectionActivity : AppCompatActivity() {
             super.onDraw(canvas)
             val paint = Paint()
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.RED);
-            val stripeWidth = (votesPercent?.div(maxVotesPercent))?.times(viewWidth!!)
+            val party: Party? = ElectionPartyMappings.SNEMOVNA_2017.get(strana?.kstrana)
+            paint.setColor(party?.color!!)
+            val stripeWidth = (strana?.hodnotystrana?.prochlasu?.div(maxVotesPercent!!))?.times(viewWidth!!)
             canvas?.drawRect(0F,0F, stripeWidth?.toFloat()!!, viewHeight.toFloat(), paint)
         }
 

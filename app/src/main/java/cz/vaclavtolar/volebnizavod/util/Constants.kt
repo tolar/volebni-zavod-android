@@ -1,4 +1,4 @@
-package cz.vaclavtolar.volebnizavod
+package cz.vaclavtolar.volebnizavod.util
 
 object Constants {
     const val ELECTION_ID = "ELECTION_ID"

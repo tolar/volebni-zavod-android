@@ -11,8 +11,8 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import cz.vaclavtolar.volebnizavod.Constants.ELECTION_ID
-import cz.vaclavtolar.volebnizavod.Constants.ELECTION_NAME
+import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
+import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.Election
 import cz.vaclavtolar.volebnizavod.service.ServerService

@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<resources>-->
-<!--    <color name="purple_200">#FFBB86FC</color>-->
-<!--    <color name="purple_500">#FF6200EE</color>-->
-<!--    <color name="purple_700">#FF3700B3</color>-->
-<!--    <color name="teal_200">#FF03DAC5</color>-->
-<!--    <color name="teal_700">#FF018786</color>-->
-<!--    <color name="black">#FF000000</color>-->
-<!--    <color name="white">#FFFFFFFF</color>-->
-<!--</resources>-->
 
 <resources>
     <color name="primaryColor">#d32f2f</color>
     <color name="primaryLightColor">#ff6659</color>
     <color name="primaryDarkColor">#9a0007</color>
     <color name="primaryTextColor">#ffffff</color>
+
+    <color name="anoColor">#261060</color>
+    <color name="odsColor">#004494</color>
+    <color name="piratiColor">#000000</color>
+    <color name="spdColor">#2C86C4</color>
+    <color name="kscmColor">#D8261C</color>
+    <color name="cssdColor">#f29400</color>
+    <color name="kducslColor">#F9DA23</color>
+    <color name="top09Color">#993399</color>
+    <color name="stanColor">#b6c932</color>
+
+    <color name="otherPartyColor">#CCC</color>
 </resources>
