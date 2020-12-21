@@ -104,7 +104,8 @@ class ElectionActivity : AppCompatActivity() {
             super.onDraw(canvas)
             val paint = Paint()
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.MAGENTA);
+            paint.setColor(Color.RED);
+            //this.layoutParams.width = 200
             canvas?.drawRect(0F,0F,100F,20F, paint)
         }
     }
