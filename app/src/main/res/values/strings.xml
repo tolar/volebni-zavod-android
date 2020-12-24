@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Volební závod</string>
+    <string name="border_text">Hranice pro vstup do sněmovny</string>
 </resources>

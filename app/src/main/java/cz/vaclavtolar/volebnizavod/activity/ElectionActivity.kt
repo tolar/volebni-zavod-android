@@ -110,6 +110,13 @@ class ElectionActivity : AppCompatActivity() {
                 .sortedByDescending { it.hodnotystrana?.prochlasu }
         partiesAdapter.maxVotesPercent =
             partiesAdapter.parties.maxByOrNull { it.hodnotystrana?.prochlasu!! }?.hodnotystrana?.prochlasu
+        partiesAdapter.parties.forEachIndexed { index, strana ->
+            run {
+                if (strana.hodnotystrana?.prochlasu!! < 5 && partiesAdapter.lastPartyToSnemovna == null) {
+                    partiesAdapter.lastPartyToSnemovna = partiesAdapter.parties[index-1]
+                }
+            }
+        }
 
         partiesAdapter.notifyDataSetChanged()
     }
@@ -131,11 +138,13 @@ class ElectionActivity : AppCompatActivity() {
     class PartiesAdapter : RecyclerView.Adapter<PartiesAdapter.ViewHolder>() {
 
 
+        var lastPartyToSnemovna: Strana? = null
         var maxVotesPercent: Double? = null
         var parties: List<Strana> = mutableListOf()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val itemView:View = LayoutInflater.from(parent.context)
+            val inflater = LayoutInflater.from(parent.context)
+            val itemView:View = inflater
                 .inflate(R.layout.party_result, parent, false)
             return ViewHolder(itemView)
         }
@@ -143,15 +152,22 @@ class ElectionActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val itemView: View = holder.itemView
             val partyNameTextView: TextView = itemView.findViewById(R.id.party_name)
-            partyNameTextView.setText(parties.get(position).nazstr)
+            val party = parties.get(position)
+            partyNameTextView.setText(party.nazstr)
 
             val partyVotesPercentTextView: TextView = itemView.findViewById(R.id.party_votes_percents)
-            partyVotesPercentTextView.setText(getFormattedPercentValue(parties.get(position).hodnotystrana?.prochlasu))
+            partyVotesPercentTextView.setText(getFormattedPercentValue(party.hodnotystrana?.prochlasu))
 
             val partyStripe: StripeView = itemView.findViewById(R.id.party_stripe)
             partyStripe.maxVotesPercent = maxVotesPercent!!
-            partyStripe.strana = parties.get(position)
+            partyStripe.strana = party
             partyStripe.partiesMap = partiesMap
+
+            if (party.kstrana == lastPartyToSnemovna?.kstrana) {
+                itemView.findViewById<View>(R.id.border).visibility = VISIBLE
+            }
+
+
 
         }
 

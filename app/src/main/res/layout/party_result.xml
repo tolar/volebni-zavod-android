@@ -8,17 +8,6 @@
     android:padding="10sp"
     tools:context=".activity.ElectionActivity">
 
-    <!--    <view-->
-    <!--        android:id="@+id/party_stripe"-->
-    <!--        class="cz.vaclavtolar.volebnizavod.activity.ElectionActivity$StripeView"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintRight_toRightOf="@id/party_votes_percents"-->
-    <!--        >-->
-    <!--    </view>-->
-
     <view
         android:id="@+id/party_stripe"
         class="cz.vaclavtolar.volebnizavod.activity.ElectionActivity$StripeView"
@@ -54,6 +43,39 @@
         android:textColor="@color/blackText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/party_stripe" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/border"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/party_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        tools:context=".activity.ElectionActivity">
+
+        <TextView
+            android:id="@+id/border_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/border_text"
+            android:textColor="@color/blackText"
+            android:textSize="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <View
+            android:id="@+id/border_line"
+            android:layout_height="1sp"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/border_text"
+            android:background="@color/blackText" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
