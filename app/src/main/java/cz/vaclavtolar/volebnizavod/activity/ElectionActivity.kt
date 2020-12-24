@@ -11,30 +11,36 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.devs.vectorchildfinder.VectorChildFinder
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.ElectionData
 import cz.vaclavtolar.volebnizavod.dto.Strana
 import cz.vaclavtolar.volebnizavod.service.ServerService
-import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_YEAR
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
-import cz.vaclavtolar.volebnizavod.util.PartyMappings
+import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_YEAR
+import cz.vaclavtolar.volebnizavod.util.Mappings
 import cz.vaclavtolar.volebnizavod.util.Party
+import cz.vaclavtolar.volebnizavod.util.PartyMappings
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
+
 class ElectionActivity : AppCompatActivity() {
 
     companion object {
         val formatter: DecimalFormat
+        var partiesMap: Map<Int, Party>? = null
 
         init {
             val symbols = DecimalFormatSymbols()
@@ -44,6 +50,7 @@ class ElectionActivity : AppCompatActivity() {
     }
 
     private var year: Int? = null
+
     private lateinit var partiesAdapter: PartiesAdapter
 
     private var id: Int? = null
@@ -54,8 +61,13 @@ class ElectionActivity : AppCompatActivity() {
 
         id = intent.getStringExtra(ELECTION_ID).toInt()
         supportActionBar!!.setTitle(intent.getStringExtra(ELECTION_NAME))
-        year = intent.getIntExtra(ELECTION_YEAR,0)
+        year = intent.getIntExtra(ELECTION_YEAR, 0)
 
+        if (year == 2013) {
+            partiesMap = PartyMappings.SNEMOVNA_2013
+        } else if (year == 2017) {
+            partiesMap = PartyMappings.SNEMOVNA_2017
+        }
 
         partiesAdapter = PartiesAdapter()
         val itemsRecyler = findViewById<RecyclerView>(R.id.parties)
@@ -74,31 +86,47 @@ class ElectionActivity : AppCompatActivity() {
                 response: Response<ElectionData>
             ) {
                 Log.d("srv_call", "Successfully got election detail from server")
-                partiesAdapter.parties = response.body()?.cr?.strana!!
-                partiesAdapter.parties =
-                    partiesAdapter.parties.sortedByDescending { it.nazstr }
-                        .sortedByDescending { it.hodnotystrana?.prochlasu }
-                partiesAdapter.maxVotesPercent =
-                    partiesAdapter.parties.maxByOrNull { it.hodnotystrana?.prochlasu!! }?.hodnotystrana?.prochlasu
-                if (year == 2013) {
-                    partiesAdapter.partiesMap = PartyMappings.SNEMOVNA_2013
-                } else if (year == 2017) {
-                    partiesAdapter.partiesMap = PartyMappings.SNEMOVNA_2017
-                }
-
-                partiesAdapter.notifyDataSetChanged()
+                updatePartiesAdapter(response)
+                updateMap(response)
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
                 Log.e("srv_call", "Failed to get election detail from server", t)
             }
         })
+
+
+
+    }
+
+    private fun updatePartiesAdapter(response: Response<ElectionData>) {
+        partiesAdapter.parties = response.body()?.cr?.strana!!
+        partiesAdapter.parties =
+            partiesAdapter.parties.sortedByDescending { it.nazstr }
+                .sortedByDescending { it.hodnotystrana?.prochlasu }
+        partiesAdapter.maxVotesPercent =
+            partiesAdapter.parties.maxByOrNull { it.hodnotystrana?.prochlasu!! }?.hodnotystrana?.prochlasu
+
+        partiesAdapter.notifyDataSetChanged()
+    }
+
+    private fun updateMap(response: Response<ElectionData>) {
+        val imageView = findViewById<ImageView>(R.id.map)
+        val vector = VectorChildFinder(applicationContext, R.drawable.ic_cr_kraje, imageView)
+        response.body()?.kraj?.forEach {
+            val maxStrana = it.strana?.maxByOrNull { it.hodnotystrana?.prochlasu!! }
+            val pathName = Mappings.CISKRAJ_TO_PATH[it.ciskraj]
+            val party = partiesMap?.get(maxStrana?.kstrana)
+            val path = vector.findPathByName(pathName)
+            path.fillColor = party?.color!!
+        }
+        imageView.visibility = VISIBLE
     }
 
 
     class PartiesAdapter : RecyclerView.Adapter<PartiesAdapter.ViewHolder>() {
 
-        var partiesMap: Map<Int, Party>? = null
+
         var maxVotesPercent: Double? = null
         var parties: List<Strana> = mutableListOf()
 
@@ -120,6 +148,7 @@ class ElectionActivity : AppCompatActivity() {
             partyStripe.maxVotesPercent = maxVotesPercent!!
             partyStripe.strana = parties.get(position)
             partyStripe.partiesMap = partiesMap
+
         }
 
         override fun getItemCount(): Int {
@@ -164,7 +193,7 @@ class ElectionActivity : AppCompatActivity() {
             val party: Party? = partiesMap?.get(strana?.kstrana)
             party?.color?.let { paint.setColor(it) }
             val stripeWidth = (strana?.hodnotystrana?.prochlasu?.div(maxVotesPercent!!))?.times(
-                viewWidth!!
+                viewWidth
             )
             canvas?.drawRect(0F, 0F, stripeWidth?.toFloat()!!, viewHeight.toFloat(), paint)
         }
