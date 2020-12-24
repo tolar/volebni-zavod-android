@@ -67,6 +67,10 @@ class ElectionActivity : AppCompatActivity() {
             partiesMap = PartyMappings.SNEMOVNA_2013
         } else if (year == 2017) {
             partiesMap = PartyMappings.SNEMOVNA_2017
+        } else if (year == 2010) {
+            partiesMap = PartyMappings.SNEMOVNA_2010
+        } else if (year == 2006) {
+            partiesMap = PartyMappings.SNEMOVNA_2006
         }
 
         partiesAdapter = PartiesAdapter()
