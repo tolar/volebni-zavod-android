@@ -105,6 +105,7 @@ class ElectionActivity : AppCompatActivity() {
 
     private fun updatePartiesAdapter(response: Response<ElectionData>) {
         partiesAdapter.parties = response.body()?.cr?.strana!!
+        partiesAdapter.parties = partiesAdapter.parties.filter { it.hodnotystrana?.prochlasu!! > 1 }
         partiesAdapter.parties =
             partiesAdapter.parties.sortedByDescending { it.nazstr }
                 .sortedByDescending { it.hodnotystrana?.prochlasu }
