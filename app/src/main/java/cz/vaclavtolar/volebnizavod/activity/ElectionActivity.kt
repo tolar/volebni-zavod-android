@@ -11,7 +11,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -52,6 +52,7 @@ class ElectionActivity : AppCompatActivity() {
     private var year: Int? = null
 
     private lateinit var partiesAdapter: PartiesAdapter
+    private lateinit var restPartiesAdapter: PartiesAdapter
 
     private var id: Int? = null
 
@@ -74,10 +75,14 @@ class ElectionActivity : AppCompatActivity() {
         }
 
         partiesAdapter = PartiesAdapter()
-        val itemsRecyler = findViewById<RecyclerView>(R.id.parties)
-        itemsRecyler.adapter = partiesAdapter
-        val layoutManager = LinearLayoutManager(this)
-        itemsRecyler.layoutManager = layoutManager
+        val itemsRecylerParties = findViewById<RecyclerView>(R.id.parties)
+        itemsRecylerParties.adapter = partiesAdapter
+        itemsRecylerParties.layoutManager = LinearLayoutManager(this)
+
+        restPartiesAdapter = PartiesAdapter()
+        val itemsRecylerRestParties = findViewById<RecyclerView>(R.id.rest_parties)
+        itemsRecylerRestParties.adapter = restPartiesAdapter
+        itemsRecylerRestParties.layoutManager = LinearLayoutManager(this)
 
     }
 
@@ -104,13 +109,15 @@ class ElectionActivity : AppCompatActivity() {
     }
 
     private fun updatePartiesAdapter(response: Response<ElectionData>) {
-        partiesAdapter.parties = response.body()?.cr?.strana!!
-        partiesAdapter.parties = partiesAdapter.parties.filter { it.hodnotystrana?.prochlasu!! > 1 }
-        partiesAdapter.parties =
-            partiesAdapter.parties.sortedByDescending { it.nazstr }
+        var parties = response.body()?.cr?.strana!!
+        parties =
+            parties.sortedByDescending { it.nazstr }
                 .sortedByDescending { it.hodnotystrana?.prochlasu }
-        partiesAdapter.maxVotesPercent =
-            partiesAdapter.parties.maxByOrNull { it.hodnotystrana?.prochlasu!! }?.hodnotystrana?.prochlasu
+        val maxProchlasu =
+            parties.maxByOrNull { it.hodnotystrana?.prochlasu!! }?.hodnotystrana?.prochlasu
+
+        partiesAdapter.parties = parties.filter { it.hodnotystrana?.prochlasu!! >= 1 }
+        partiesAdapter.maxVotesPercent = maxProchlasu
         partiesAdapter.parties.forEachIndexed { index, strana ->
             run {
                 if (strana.hodnotystrana?.prochlasu!! < 5 && partiesAdapter.lastPartyToSnemovna == null) {
@@ -119,7 +126,11 @@ class ElectionActivity : AppCompatActivity() {
             }
         }
 
+        restPartiesAdapter.parties = parties.filter { it.hodnotystrana?.prochlasu!! < 1 }
+        restPartiesAdapter.maxVotesPercent = maxProchlasu
+
         partiesAdapter.notifyDataSetChanged()
+        restPartiesAdapter.notifyDataSetChanged()
     }
 
     private fun updateMap(response: Response<ElectionData>) {
@@ -223,6 +234,16 @@ class ElectionActivity : AppCompatActivity() {
             super.onSizeChanged(w, h, oldw, oldh)
             this.viewWidth = w
             this.viewHeight = h
+        }
+    }
+
+    fun toggleMoreParties(view: View) {
+        val restPartiesView:View = findViewById(R.id.rest_parties_wrapper)
+        val currentVisibility = restPartiesView.visibility
+        if (currentVisibility == VISIBLE) {
+            restPartiesView.visibility = GONE
+        } else if (currentVisibility == INVISIBLE || currentVisibility == GONE) {
+            restPartiesView.visibility = VISIBLE
         }
     }
 
