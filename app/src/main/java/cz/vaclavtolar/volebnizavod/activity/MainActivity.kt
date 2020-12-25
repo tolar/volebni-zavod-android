@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<Election>>, t: Throwable) {
-                Log.e("srv_call", "Failed to get elections server", t)
+                Log.e("srv_call", "Failed to get elections from server", t)
             }
         })
     }
