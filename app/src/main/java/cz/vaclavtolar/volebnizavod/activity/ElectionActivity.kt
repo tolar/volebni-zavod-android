@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -97,6 +98,7 @@ class ElectionActivity : AppCompatActivity() {
                 Log.d("srv_call", "Successfully got election detail from server")
                 updatePartiesAdapter(response)
                 updateMap(response)
+                updateGui()
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
@@ -144,6 +146,10 @@ class ElectionActivity : AppCompatActivity() {
             path.fillColor = party?.color!!
         }
         imageView.visibility = VISIBLE
+    }
+
+    private fun updateGui() {
+        findViewById<View>(R.id.more_parties_btn).visibility = VISIBLE
     }
 
 
@@ -238,12 +244,15 @@ class ElectionActivity : AppCompatActivity() {
     }
 
     fun toggleMoreParties(view: View) {
-        val restPartiesView:View = findViewById(R.id.rest_parties_wrapper)
+        val restPartiesView: View = findViewById(R.id.rest_parties_wrapper)
+        val morePartiesBtn: Button = findViewById(R.id.more_parties_btn)
         val currentVisibility = restPartiesView.visibility
         if (currentVisibility == VISIBLE) {
             restPartiesView.visibility = GONE
+            morePartiesBtn.text = "Zobrazit další strany"
         } else if (currentVisibility == INVISIBLE || currentVisibility == GONE) {
             restPartiesView.visibility = VISIBLE
+            morePartiesBtn.text = "Skrýt další strany"
         }
     }
 
