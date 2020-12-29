@@ -17,4 +17,21 @@ object Mappings {
         13 to "zlinsky",
         14 to "moravskoslezky"
     )
+
+    val DISTRICT_2006_NUTS_TO_NUTS: Map<String, String> = mapOf(
+        // Vysocina
+        "CZ0611" to "CZ0631",
+        "CZ0612" to "CZ0632",
+        "CZ0613" to "CZ0633",
+        "CZ0614" to "CZ0634",
+        "CZ0615" to "CZ0635",
+        // Jihomoravsky kraj
+        "CZ0621" to "CZ0641",
+        "CZ0622" to "CZ0642",
+        "CZ0623" to "CZ0643",
+        "CZ0624" to "CZ0644",
+        "CZ0625" to "CZ0645",
+        "CZ0626" to "CZ0646",
+        "CZ0627" to "CZ0647",
+    )
 }

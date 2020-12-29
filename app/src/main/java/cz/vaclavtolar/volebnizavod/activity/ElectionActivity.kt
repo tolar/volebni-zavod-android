@@ -170,8 +170,12 @@ class ElectionActivity : AppCompatActivity() {
         val vector = VectorChildFinder(applicationContext, R.drawable.ic_cr_okresy, imageView)
         response.body()?.forEach {
             val maxStrana = it.okres?.hlasystrana?.maxByOrNull { it.prochlasu!! }
-            val pathName = it.okres?.nutsokres
-            val path = vector.findPathByName(pathName)
+            var pathName = it.okres?.nutsokres
+            var path = vector.findPathByName(pathName)
+            if (path == null) {
+                pathName = Mappings.DISTRICT_2006_NUTS_TO_NUTS[it.okres?.nutsokres]
+                path = vector.findPathByName(pathName)
+            }
             val party = partiesMap?.get(maxStrana?.kstrana)
             path?.fillColor = party?.color!!
         }
