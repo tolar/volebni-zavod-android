@@ -55,7 +55,7 @@
         </RelativeLayout>
 
         <ImageView
-            android:id="@+id/map"
+            android:id="@+id/counties_map"
             android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
@@ -63,6 +63,16 @@
             android:src="@drawable/ic_cr_kraje"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rest_parties_wrapper" />
+
+        <ImageView
+            android:id="@+id/districts_map"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_cr_okresy"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/counties_map" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

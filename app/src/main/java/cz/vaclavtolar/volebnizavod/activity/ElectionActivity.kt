@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.devs.vectorchildfinder.VectorChildFinder
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.ElectionData
+import cz.vaclavtolar.volebnizavod.dto.ElectionDistrictData
 import cz.vaclavtolar.volebnizavod.dto.Strana
 import cz.vaclavtolar.volebnizavod.service.ServerService
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
@@ -89,20 +90,35 @@ class ElectionActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val call: Call<ElectionData>? = id?.let { ServerService.getInstance().getElection(it) }
-        call?.enqueue(object : Callback<ElectionData> {
+        val callForElectionDetail: Call<ElectionData>? = id?.let { ServerService.getInstance().getElection(it) }
+        callForElectionDetail?.enqueue(object : Callback<ElectionData> {
             override fun onResponse(
                 call: Call<ElectionData>,
                 response: Response<ElectionData>
             ) {
                 Log.d("srv_call", "Successfully got election detail from server")
                 updatePartiesAdapter(response)
-                updateMap(response)
+                updateCountiesMap(response)
                 updateGui()
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
                 Log.e("srv_call", "Failed to get election detail from server", t)
+            }
+        })
+
+        val callForElectionDistrict: Call<List<ElectionDistrictData>>? = id?.let { ServerService.getInstance().getElectionDistricts(it) }
+        callForElectionDistrict?.enqueue(object : Callback<List<ElectionDistrictData>> {
+            override fun onResponse(
+                call: Call<List<ElectionDistrictData>>,
+                response: Response<List<ElectionDistrictData>>
+            ) {
+                Log.d("srv_call", "Successfully got election districts from server")
+                updateDistrictMap(response)
+            }
+
+            override fun onFailure(call: Call<List<ElectionDistrictData>>, t: Throwable) {
+                Log.e("srv_call", "Failed to get election districts from server", t)
             }
         })
 
@@ -135,8 +151,8 @@ class ElectionActivity : AppCompatActivity() {
         restPartiesAdapter.notifyDataSetChanged()
     }
 
-    private fun updateMap(response: Response<ElectionData>) {
-        val imageView = findViewById<ImageView>(R.id.map)
+    private fun updateCountiesMap(response: Response<ElectionData>) {
+        val imageView = findViewById<ImageView>(R.id.counties_map)
         val vector = VectorChildFinder(applicationContext, R.drawable.ic_cr_kraje, imageView)
         response.body()?.kraj?.forEach {
             val maxStrana = it.strana?.maxByOrNull { it.hodnotystrana?.prochlasu!! }
@@ -144,6 +160,19 @@ class ElectionActivity : AppCompatActivity() {
             val party = partiesMap?.get(maxStrana?.kstrana)
             val path = vector.findPathByName(pathName)
             path.fillColor = party?.color!!
+        }
+        imageView.visibility = VISIBLE
+    }
+
+    private fun updateDistrictMap(response: Response<List<ElectionDistrictData>>) {
+        val imageView = findViewById<ImageView>(R.id.districts_map)
+        val vector = VectorChildFinder(applicationContext, R.drawable.ic_cr_okresy, imageView)
+        response.body()?.forEach {
+            val maxStrana = it.okres?.hlasystrana?.maxByOrNull { it.prochlasu!! }
+            val pathName = it.okres?.nutsokres
+            val path = vector.findPathByName(pathName)
+            val party = partiesMap?.get(maxStrana?.kstrana)
+            path?.fillColor = party?.color!!
         }
         imageView.visibility = VISIBLE
     }

@@ -10,5 +10,6 @@ class Election {
 
     @JsonDeserialize(using = LocalDateDeserializer::class)
     var date: LocalDate? = null
-    var updated: String? = null
+    var dataUpdated: String? = null
+    var okresDataUpdated: String? = null
 }

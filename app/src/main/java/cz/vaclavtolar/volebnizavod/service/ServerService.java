@@ -8,6 +8,7 @@ import java.util.List;
 
 import cz.vaclavtolar.volebnizavod.dto.Election;
 import cz.vaclavtolar.volebnizavod.dto.ElectionData;
+import cz.vaclavtolar.volebnizavod.dto.ElectionDistrictData;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -46,6 +47,10 @@ public class ServerService {
 
     public Call<ElectionData> getElection(int id) {
         return serverApi.getElection(id);
+    }
+
+    public Call<List<ElectionDistrictData>> getElectionDistricts(int id) {
+        return serverApi.getElectionDistricts(id);
     }
 
     @NotNull
