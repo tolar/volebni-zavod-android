@@ -54,25 +54,69 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/headline_counties"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rest_parties_wrapper"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="20dp"
+            android:text="Vítězové v krajích"
+            android:textColor="@color/blackText"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            />
+
+
         <ImageView
             android:id="@+id/counties_map"
             android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
-            android:layout_marginTop="20dp"
             android:src="@drawable/ic_cr_kraje"
+            android:layout_marginTop="5dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rest_parties_wrapper" />
+            app:layout_constraintTop_toBottomOf="@+id/headline_counties" />
+
+        <TextView
+            android:id="@+id/headline_districts"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/counties_map"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="20dp"
+            android:text="Vítězové v okresech"
+            android:textColor="@color/blackText"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/districts_loading_info"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/counties_map"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="20dp"
+            android:text="Načítají se data okresů..."
+            />
+
 
         <ImageView
             android:id="@+id/districts_map"
             android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:src="@drawable/ic_cr_okresy"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/counties_map" />
+            app:layout_constraintTop_toBottomOf="@+id/headline_districts" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

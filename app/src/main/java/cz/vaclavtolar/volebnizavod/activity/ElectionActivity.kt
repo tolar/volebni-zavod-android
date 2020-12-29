@@ -99,7 +99,7 @@ class ElectionActivity : AppCompatActivity() {
                 Log.d("srv_call", "Successfully got election detail from server")
                 updatePartiesAdapter(response)
                 updateCountiesMap(response)
-                updateGui()
+                updateMainDataGui()
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
@@ -162,6 +162,7 @@ class ElectionActivity : AppCompatActivity() {
             path.fillColor = party?.color!!
         }
         imageView.visibility = VISIBLE
+        findViewById<View>(R.id.headline_counties).visibility = VISIBLE
     }
 
     private fun updateDistrictMap(response: Response<List<ElectionDistrictData>>) {
@@ -175,10 +176,13 @@ class ElectionActivity : AppCompatActivity() {
             path?.fillColor = party?.color!!
         }
         imageView.visibility = VISIBLE
+        findViewById<View>(R.id.headline_districts).visibility = VISIBLE
+        findViewById<View>(R.id.districts_loading_info).visibility = GONE
     }
 
-    private fun updateGui() {
+    private fun updateMainDataGui() {
         findViewById<View>(R.id.more_parties_btn).visibility = VISIBLE
+        findViewById<View>(R.id.districts_loading_info).visibility = VISIBLE
     }
 
 
