@@ -1,122 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<androidx.drawerlayout.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:scrollbars="vertical"
-        tools:context=".activity.ElectionActivity">
+        android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/parties_wrapper"
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar_main" />
+
+        <ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/parties"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </androidx.recyclerview.widget.RecyclerView>
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/more_parties_btn"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:onClick="toggleMoreParties"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/parties_wrapper"
-            android:text="Zobrazit další strany"
-            />
-
-        <RelativeLayout
-            android:id="@+id/rest_parties_wrapper"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/more_parties_btn">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rest_parties"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </androidx.recyclerview.widget.RecyclerView>
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/headline_counties"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rest_parties_wrapper"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="20dp"
-            android:text="Vítězové v krajích"
-            android:textColor="@color/blackText"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            />
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:scrollbars="vertical"
+                tools:context=".activity.ElectionActivity">
 
 
-        <ImageView
-            android:id="@+id/counties_map"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="250dp"
-            android:src="@drawable/ic_cr_kraje"
-            android:layout_marginTop="5dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/headline_counties" />
+                <RelativeLayout
+                    android:id="@+id/parties_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/headline_districts"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/counties_map"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="20dp"
-            android:text="Vítězové v okresech"
-            android:textColor="@color/blackText"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/parties"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
-            android:id="@+id/districts_loading_info"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/counties_map"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="20dp"
-            android:text="Načítají se data okresů..."
-            />
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/more_parties_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:onClick="toggleMoreParties"
+                    android:text="Zobrazit další strany"
+                    android:visibility="invisible"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/parties_wrapper" />
+
+                <RelativeLayout
+                    android:id="@+id/rest_parties_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/more_parties_btn">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rest_parties"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/headline_counties"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Vítězové v krajích"
+                    android:textColor="@color/blackText"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rest_parties_wrapper" />
 
 
-        <ImageView
-            android:id="@+id/districts_map"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="250dp"
-            android:layout_marginTop="5dp"
-            android:src="@drawable/ic_cr_okresy"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/headline_districts" />
+                <ImageView
+                    android:id="@+id/counties_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="250dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/ic_cr_kraje"
+                    android:visibility="invisible"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/headline_counties" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+                <TextView
+                    android:id="@+id/headline_districts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Vítězové v okresech"
+                    android:textColor="@color/blackText"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/counties_map" />
+
+                <TextView
+                    android:id="@+id/districts_loading_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Načítají se data okresů..."
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/counties_map" />
+
+
+                <ImageView
+                    android:id="@+id/districts_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="250dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/ic_cr_okresy"
+                    android:visibility="invisible"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/headline_districts" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/menu_nav"
+        />
+
+</androidx.drawerlayout.widget.DrawerLayout>
+
+

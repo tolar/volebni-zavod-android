@@ -9,17 +9,20 @@ import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.*
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.devs.vectorchildfinder.VectorChildFinder
+import com.google.android.material.navigation.NavigationView
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.ElectionData
 import cz.vaclavtolar.volebnizavod.dto.ElectionDistrictData
@@ -38,7 +41,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
 
-class ElectionActivity : AppCompatActivity() {
+class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
         val formatter: DecimalFormat
@@ -61,6 +64,24 @@ class ElectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_election)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawer,
+            toolbar,
+            R.string.nav_open_drawer,
+            R.string.nav_close_drawer
+        )
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
 
         id = intent.getStringExtra(ELECTION_ID).toInt()
         supportActionBar!!.setTitle(intent.getStringExtra(ELECTION_NAME))
@@ -90,7 +111,11 @@ class ElectionActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val callForElectionDetail: Call<ElectionData>? = id?.let { ServerService.getInstance().getElection(it) }
+        val callForElectionDetail: Call<ElectionData>? = id?.let {
+            ServerService.getInstance().getElection(
+                it
+            )
+        }
         callForElectionDetail?.enqueue(object : Callback<ElectionData> {
             override fun onResponse(
                 call: Call<ElectionData>,
@@ -107,7 +132,11 @@ class ElectionActivity : AppCompatActivity() {
             }
         })
 
-        val callForElectionDistrict: Call<List<ElectionDistrictData>>? = id?.let { ServerService.getInstance().getElectionDistricts(it) }
+        val callForElectionDistrict: Call<List<ElectionDistrictData>>? = id?.let {
+            ServerService.getInstance().getElectionDistricts(
+                it
+            )
+        }
         callForElectionDistrict?.enqueue(object : Callback<List<ElectionDistrictData>> {
             override fun onResponse(
                 call: Call<List<ElectionDistrictData>>,
@@ -121,7 +150,6 @@ class ElectionActivity : AppCompatActivity() {
                 Log.e("srv_call", "Failed to get election districts from server", t)
             }
         })
-
 
 
     }
@@ -139,7 +167,7 @@ class ElectionActivity : AppCompatActivity() {
         partiesAdapter.parties.forEachIndexed { index, strana ->
             run {
                 if (strana.hodnotystrana?.prochlasu!! < 5 && partiesAdapter.lastPartyToSnemovna == null) {
-                    partiesAdapter.lastPartyToSnemovna = partiesAdapter.parties[index-1]
+                    partiesAdapter.lastPartyToSnemovna = partiesAdapter.parties[index - 1]
                 }
             }
         }
@@ -199,7 +227,7 @@ class ElectionActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
-            val itemView:View = inflater
+            val itemView: View = inflater
                 .inflate(R.layout.party_result, parent, false)
             return ViewHolder(itemView)
         }
@@ -210,7 +238,8 @@ class ElectionActivity : AppCompatActivity() {
             val party = parties.get(position)
             partyNameTextView.setText(party.nazstr)
 
-            val partyVotesPercentTextView: TextView = itemView.findViewById(R.id.party_votes_percents)
+            val partyVotesPercentTextView: TextView =
+                itemView.findViewById(R.id.party_votes_percents)
             partyVotesPercentTextView.setText(getFormattedPercentValue(party.hodnotystrana?.prochlasu))
 
             val partyStripe: StripeView = itemView.findViewById(R.id.party_stripe)
@@ -221,7 +250,6 @@ class ElectionActivity : AppCompatActivity() {
             if (party.kstrana == lastPartyToSnemovna?.kstrana) {
                 itemView.findViewById<View>(R.id.border).visibility = VISIBLE
             }
-
 
 
         }
@@ -250,8 +278,7 @@ class ElectionActivity : AppCompatActivity() {
     class StripeView(
         context: Context,
         attributeSet: AttributeSet? = null
-    )
-        : View(context, attributeSet) {
+    ) : View(context, attributeSet) {
 
         var maxVotesPercent: Double? = null
         var strana: Strana? = null
@@ -291,6 +318,12 @@ class ElectionActivity : AppCompatActivity() {
             restPartiesView.visibility = VISIBLE
             morePartiesBtn.text = "Skrýt další strany"
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        drawer.closeDrawer(GravityCompat.START)
+        return true
     }
 
 }
