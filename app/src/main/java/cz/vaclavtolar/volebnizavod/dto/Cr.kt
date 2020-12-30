@@ -5,4 +5,5 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Cr {
     var strana: List<Strana>? = null
+    var ucast: Ucast? = null
 }

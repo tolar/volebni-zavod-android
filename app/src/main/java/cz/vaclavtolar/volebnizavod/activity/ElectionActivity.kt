@@ -124,7 +124,7 @@ class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 Log.d("srv_call", "Successfully got election detail from server")
                 updatePartiesAdapter(response)
                 updateCountiesMap(response)
-                updateMainDataGui()
+                updateMainDataGui(response)
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
@@ -212,9 +212,19 @@ class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         findViewById<View>(R.id.districts_loading_info).visibility = GONE
     }
 
-    private fun updateMainDataGui() {
+    private fun updateMainDataGui(response: Response<ElectionData>) {
+
+        findViewById<TextView>(R.id.counted).text = formatter.format(response.body()?.cr?.ucast?.okrskyzpracproc) + "%"
+        findViewById<TextView>(R.id.attendance).text = formatter.format(response.body()?.cr?.ucast?.ucastproc) + "%"
+
+        findViewById<View>(R.id.counted_label).visibility = VISIBLE
+        findViewById<View>(R.id.counted).visibility = VISIBLE
+        findViewById<View>(R.id.attendance_label).visibility = VISIBLE
+        findViewById<View>(R.id.attendance).visibility = VISIBLE
+
         findViewById<View>(R.id.more_parties_btn).visibility = VISIBLE
         findViewById<View>(R.id.districts_loading_info).visibility = VISIBLE
+
     }
 
 
