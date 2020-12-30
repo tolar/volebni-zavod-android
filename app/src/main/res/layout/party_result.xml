@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="10sp"
     android:paddingBottom="10sp"
-    tools:context=".activity.ElectionActivity">
+    tools:context=".activity.VotesActivity">
 
     <view
         android:id="@+id/party_stripe"
@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        tools:context=".activity.ElectionActivity">
+        tools:context=".activity.VotesActivity">
 
         <TextView
             android:id="@+id/border_text"

@@ -29,7 +29,7 @@
                 android:layout_marginTop="5sp"
                 android:layout_marginRight="15sp"
                 android:scrollbars="vertical"
-                tools:context=".activity.ElectionActivity">
+                tools:context=".activity.VotesActivity">
 
                 <TextView
                     android:id="@+id/counted_label"

@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         private fun startElectionActivity(context: Context, position: Int) {
-            val intent = Intent(context, ElectionActivity::class.java).apply {
+            val intent = Intent(context, VotesActivity::class.java).apply {
                 val election = elections.get(position)
                 putExtra(ELECTION_ID, election.id)
                 putExtra(ELECTION_NAME, election.name)
