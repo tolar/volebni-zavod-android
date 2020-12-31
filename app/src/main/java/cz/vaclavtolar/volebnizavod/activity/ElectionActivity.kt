@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.Strana
+import cz.vaclavtolar.volebnizavod.util.Constants
 import cz.vaclavtolar.volebnizavod.util.Party
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -35,15 +36,20 @@ open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
         var intent: Intent? = null
-        when (id) {
+        when (item.itemId) {
             R.id.nav_votes -> {
-                intent = Intent(this, VotesActivity::class.java)
-            }
+                intent = Intent(this, VotesActivity::class.java).apply {
+                    putExtra(Constants.ELECTION_ID, id.toString())
+                    putExtra(Constants.ELECTION_NAME, name)
+                    putExtra(Constants.ELECTION_YEAR, year)
+                }}
             R.id.nav_mandates -> {
-                intent = Intent(this, MandatesActivity::class.java)
-            }
+                intent = Intent(this, MandatesActivity::class.java).apply {
+                    putExtra(Constants.ELECTION_ID, id.toString())
+                    putExtra(Constants.ELECTION_NAME, name)
+                    putExtra(Constants.ELECTION_YEAR, year)
+                }}
         }
         if (intent != null) {
             startActivity(intent)

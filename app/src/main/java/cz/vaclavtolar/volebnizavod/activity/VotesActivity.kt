@@ -278,38 +278,4 @@ class VotesActivity : ElectionActivity() {
         }
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-        var intent: Intent? = null
-        when (itemId) {
-            R.id.nav_votes -> {
-                intent = Intent(this, VotesActivity::class.java).apply {
-                    putExtra(ELECTION_ID, id.toString())
-                    putExtra(ELECTION_NAME, name)
-                    putExtra(ELECTION_YEAR, year)
-            }}
-            R.id.nav_mandates -> {
-                intent = Intent(this, MandatesActivity::class.java).apply {
-                    putExtra(ELECTION_ID, id.toString())
-                    putExtra(ELECTION_NAME, name)
-                    putExtra(ELECTION_YEAR, year)
-            }}
-        }
-        if (intent != null) {
-            startActivity(intent)
-        }
-
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        drawer.closeDrawer(GravityCompat.START)
-        return true
-    }
-
-    override fun onBackPressed() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
 }
