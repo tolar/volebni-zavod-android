@@ -67,7 +67,8 @@ open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         attributeSet: AttributeSet? = null
     ) : View(context, attributeSet) {
 
-        var maxVotesPercent: Double? = null
+        var max: Double? = null
+        var value: Double? = null
         var strana: Strana? = null
         var partiesMap: Map<Int, Party>? = null
 
@@ -81,7 +82,7 @@ open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
             val party: Party? = partiesMap?.get(strana?.kstrana)
             party?.color?.let { paint.setColor(it) }
-            val stripeWidth = (strana?.hodnotystrana?.prochlasu?.div(maxVotesPercent!!))?.times(
+            val stripeWidth = (value?.div(max!!))?.times(
                 viewWidth
             )
             canvas?.drawRect(0F, 0F, stripeWidth?.toFloat()!!, viewHeight.toFloat(), paint)

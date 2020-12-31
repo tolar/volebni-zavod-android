@@ -1,14 +1,10 @@
 package cz.vaclavtolar.volebnizavod.activity
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
-import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -16,7 +12,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -33,13 +28,10 @@ import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_YEAR
 import cz.vaclavtolar.volebnizavod.util.Mappings
-import cz.vaclavtolar.volebnizavod.util.Party
 import cz.vaclavtolar.volebnizavod.util.PartyMappings
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 
 
 class VotesActivity : ElectionActivity() {
@@ -236,11 +228,12 @@ class VotesActivity : ElectionActivity() {
             partyNameTextView.setText(party.nazstr)
 
             val partyVotesPercentTextView: TextView =
-                itemView.findViewById(R.id.party_votes_percents)
+                itemView.findViewById(R.id.party_value)
             partyVotesPercentTextView.setText(getFormattedPercentValue(party.hodnotystrana?.prochlasu))
 
             val partyStripe: StripeView = itemView.findViewById(R.id.party_stripe)
-            partyStripe.maxVotesPercent = maxVotesPercent!!
+            partyStripe.value = party.hodnotystrana?.prochlasu
+            partyStripe.max = maxVotesPercent!!
             partyStripe.strana = party
             partyStripe.partiesMap = partiesMap
 

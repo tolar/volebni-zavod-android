@@ -16,8 +16,8 @@
         android:layout_height="30dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="[Barevny pruh]"
-        app:layout_constraintEnd_toStartOf="@+id/party_votes_percents"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/party_value"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,10 +25,10 @@
 
 
     <TextView
-        android:id="@+id/party_votes_percents"
+        android:id="@+id/party_value"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:text="[26,77%]"
+        android:text=""
         android:textSize="24dp"
         android:textColor="@color/blackText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +40,7 @@
         android:id="@+id/party_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="[Politická strana]"
+        android:text=""
         android:textColor="@color/blackText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/party_stripe" />

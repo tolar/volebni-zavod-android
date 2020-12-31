@@ -1,26 +1,19 @@
 package cz.vaclavtolar.volebnizavod.activity
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
-import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import android.view.View.*
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.devs.vectorchildfinder.VectorChildFinder
 import com.google.android.material.navigation.NavigationView
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.ElectionData
@@ -29,13 +22,10 @@ import cz.vaclavtolar.volebnizavod.service.ServerService
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_YEAR
-import cz.vaclavtolar.volebnizavod.util.Party
 import cz.vaclavtolar.volebnizavod.util.PartyMappings
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 
 
 class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -114,21 +104,16 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
     private fun updatePartiesAdapter(response: Response<ElectionData>) {
         var parties = response.body()?.cr?.strana!!
+        parties = parties.filter { it.hodnotystrana?.mandaty != null &&  it.hodnotystrana?.mandaty!! >= 1}
         parties =
             parties.sortedByDescending { it.nazstr }
-                .sortedByDescending { it.hodnotystrana?.prochlasu }
-        val maxProchlasu =
-            parties.maxByOrNull { it.hodnotystrana?.prochlasu!! }?.hodnotystrana?.prochlasu
+                .sortedByDescending { it.hodnotystrana?.mandaty }
+        val maxMandates =
+            parties.maxByOrNull { it.hodnotystrana?.mandaty!! }?.hodnotystrana?.mandaty
 
-        partiesAdapter.parties = parties.filter { it.hodnotystrana?.prochlasu!! >= 1 }
-        partiesAdapter.maxVotesPercent = maxProchlasu
-        partiesAdapter.parties.forEachIndexed { index, strana ->
-            run {
-                if (strana.hodnotystrana?.prochlasu!! < 5 && partiesAdapter.lastPartyToSnemovna == null) {
-                    partiesAdapter.lastPartyToSnemovna = partiesAdapter.parties[index - 1]
-                }
-            }
-        }
+        partiesAdapter.parties = parties
+        partiesAdapter.maxMandates = maxMandates
+
         partiesAdapter.notifyDataSetChanged()
     }
 
@@ -148,37 +133,41 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
     class PartiesAdapter : RecyclerView.Adapter<PartiesAdapter.ViewHolder>() {
 
-
-        var lastPartyToSnemovna: Strana? = null
-        var maxVotesPercent: Double? = null
+        var maxMandates: Int? = null
         var parties: List<Strana> = mutableListOf()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val itemView: View = inflater
-                .inflate(R.layout.party_result, parent, false)
+                .inflate(R.layout.party_mandates, parent, false)
             return ViewHolder(itemView)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val itemView: View = holder.itemView
             val partyNameTextView: TextView = itemView.findViewById(R.id.party_name)
-            val party = parties.get(position)
-            partyNameTextView.setText(party.nazstr)
+            val strana = parties.get(position)
+            partyNameTextView.setText(strana.nazstr)
 
-            val partyVotesPercentTextView: TextView =
-                itemView.findViewById(R.id.party_votes_percents)
-            partyVotesPercentTextView.setText(getFormattedPercentValue(party.hodnotystrana?.prochlasu))
+            val partyMandatesView: TextView =
+                itemView.findViewById(R.id.party_value)
+            strana.hodnotystrana?.mandaty?.let { partyMandatesView.setText(it.toString()) }
 
-            val partyStripe: StripeView = itemView.findViewById(R.id.party_stripe)
-            partyStripe.maxVotesPercent = maxVotesPercent!!
-            partyStripe.strana = party
-            partyStripe.partiesMap = partiesMap
+            val personsWrapper = itemView.findViewById<GridLayout>(R.id.persons_wrapper)
 
-            if (party.kstrana == lastPartyToSnemovna?.kstrana) {
-                itemView.findViewById<View>(R.id.border).visibility = VISIBLE
+            val mandates = strana.hodnotystrana?.mandaty
+            for (i in 1..mandates!!) {
+                val imageView = ImageView(itemView.context)
+                imageView.setImageResource(R.drawable.ic_baseline_person_36)
+                imageView.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                val vector = VectorChildFinder(itemView.context, R.drawable.ic_baseline_person_36, imageView)
+                val party = partiesMap?.get(strana.kstrana)
+                vector.findPathByName("person").fillColor = party?.color!!
+                personsWrapper.addView(imageView)
             }
-
 
         }
 
