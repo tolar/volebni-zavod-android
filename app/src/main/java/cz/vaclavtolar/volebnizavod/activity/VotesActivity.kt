@@ -217,7 +217,7 @@ class VotesActivity : ElectionActivity() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val itemView: View = inflater
-                .inflate(R.layout.party_result, parent, false)
+                .inflate(R.layout.party_votes, parent, false)
             return ViewHolder(itemView)
         }
 

@@ -1,8 +1,8 @@
 package cz.vaclavtolar.volebnizavod.activity
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.*
 import android.view.View.*
 import android.widget.*
@@ -24,6 +24,7 @@ import cz.vaclavtolar.volebnizavod.util.PartyMappings
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.roundToInt
 
 
 class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -76,7 +77,7 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
     override fun onStart() {
         super.onStart()
-        supportActionBar!!.setTitle(name)
+        supportActionBar!!.setTitle(name + " - " + "mandáty")
 
         val callForElectionDetail: Call<ElectionData>? = id?.let {
             ServerService.getInstance().getElection(
@@ -159,14 +160,25 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             val personsWrapper = itemView.findViewById<ViewGroup>(R.id.persons_wrapper)
 
             val mandates = strana.hodnotystrana?.mandaty
+
+            val minus5dpPx:Int = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                -5f,
+                holder.itemView.context.resources.getDisplayMetrics()).roundToInt()
+
             for (i in 1..mandates!!) {
                 val imageView = ImageView(itemView.context)
                 imageView.setImageResource(R.drawable.ic_baseline_person_36)
-                imageView.layoutParams = LinearLayout.LayoutParams(
+                val lp:LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                //imageView.setBackgroundColor(Color.CYAN)
+                imageView.minimumHeight = 0
+                imageView.minimumWidth = 0
+
+                lp.setMargins(minus5dpPx,minus5dpPx,0,0)
+                imageView.layoutParams = lp
+
                 val vector = VectorChildFinder(itemView.context, R.drawable.ic_baseline_person_36, imageView)
 
                 vector.findPathByName("person").fillColor = party?.color!!
