@@ -3,40 +3,69 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingTop="10sp"
+    android:paddingBottom="10sp"
+    >
 
-    <GridLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/persons_wrapper"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:columnCount="8"
+        android:layout_margin="0dp"
+        android:padding="0dp"
+        app:flexDirection="row"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_start"
+        app:alignContent="flex_start"
+        app:showDivider="none"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/value_name_wrapper"
         >
-    </GridLayout>
 
-    <TextView
-        android:id="@+id/party_value"
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/value_name_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="[78]"
-        android:textSize="28dp"
-        android:textStyle="bold"
-        android:textColor="@color/blackText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        >
 
-    <TextView
-        android:id="@+id/party_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="[PartyName]"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="@color/blackText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/party_value"
-        />
+        <TextView
+            android:id="@+id/party_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[78]"
+            android:textSize="28dp"
+            android:textStyle="bold"
+            android:textColor="@color/blackText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/party_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[PartyName]"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="@color/blackText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/party_value" />
+
+        <TextView
+            android:id="@+id/party_mandates_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[45% mandátů]"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/party_name" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

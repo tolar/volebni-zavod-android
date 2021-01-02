@@ -1,6 +1,5 @@
 package cz.vaclavtolar.volebnizavod.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -13,7 +12,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -90,6 +88,8 @@ class VotesActivity : ElectionActivity() {
 
     override fun onStart() {
         super.onStart()
+        supportActionBar!!.setTitle(name)
+
         val callForElectionDetail: Call<ElectionData>? = id?.let {
             ServerService.getInstance().getElection(
                 it
@@ -193,8 +193,8 @@ class VotesActivity : ElectionActivity() {
 
     private fun updateMainDataGui(response: Response<ElectionData>) {
 
-        findViewById<TextView>(R.id.counted).text = formatter.format(response.body()?.cr?.ucast?.okrskyzpracproc) + "%"
-        findViewById<TextView>(R.id.attendance).text = formatter.format(response.body()?.cr?.ucast?.ucastproc) + "%"
+        findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.okrskyzpracproc) + "%"
+        findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.ucastproc) + "%"
 
         findViewById<View>(R.id.counted_label).visibility = VISIBLE
         findViewById<View>(R.id.counted).visibility = VISIBLE
@@ -224,20 +224,27 @@ class VotesActivity : ElectionActivity() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val itemView: View = holder.itemView
             val partyNameTextView: TextView = itemView.findViewById(R.id.party_name)
-            val party = parties.get(position)
-            partyNameTextView.setText(party.nazstr)
+            val strana = parties.get(position)
+            var partyName = strana.nazstr
+            if (partiesMap?.get(strana.kstrana)?.abbr != null) {
+                partyName = partiesMap?.get(strana.kstrana)?.abbr
+            }
+            partyNameTextView.text = partyName
+
+            val partyVotesTextView: TextView = itemView.findViewById(R.id.party_votes)
+            partyVotesTextView.text = " - " + formatterForVotesAbsoluteValue.format(strana.hodnotystrana?.hlasy) + " hlasů"
 
             val partyVotesPercentTextView: TextView =
                 itemView.findViewById(R.id.party_value)
-            partyVotesPercentTextView.setText(getFormattedPercentValue(party.hodnotystrana?.prochlasu))
+            partyVotesPercentTextView.setText(getFormattedPercentValue(strana.hodnotystrana?.prochlasu))
 
             val partyStripe: StripeView = itemView.findViewById(R.id.party_stripe)
-            partyStripe.value = party.hodnotystrana?.prochlasu
+            partyStripe.value = strana.hodnotystrana?.prochlasu
             partyStripe.max = maxVotesPercent!!
-            partyStripe.strana = party
+            partyStripe.strana = strana
             partyStripe.partiesMap = partiesMap
 
-            if (party.kstrana == lastPartyToSnemovna?.kstrana) {
+            if (strana.kstrana == lastPartyToSnemovna?.kstrana) {
                 itemView.findViewById<View>(R.id.border).visibility = VISIBLE
             }
 
@@ -250,7 +257,7 @@ class VotesActivity : ElectionActivity() {
 
         private fun getFormattedPercentValue(percentVotes: Double?): SpannableStringBuilder {
 
-            val formattedValue: String = formatter.format(percentVotes) + " %"
+            val formattedValue: String = formatterForVotesPercentValue.format(percentVotes) + " %"
             val spannableStringBuilder = SpannableStringBuilder(formattedValue)
             spannableStringBuilder.setSpan(
                 RelativeSizeSpan(0.75f),

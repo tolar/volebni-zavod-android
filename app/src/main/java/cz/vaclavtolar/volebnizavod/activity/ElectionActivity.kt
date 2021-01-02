@@ -25,13 +25,22 @@ open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     protected var year: Int? = null
 
     companion object {
-        val formatter: DecimalFormat
+        val formatterForVotesPercentValue: DecimalFormat
+        val formatterForVotesAbsoluteValue: DecimalFormat
+        val formatterForMandatesPercentValue: DecimalFormat
         var partiesMap: Map<Int, Party>? = null
 
         init {
             val symbols = DecimalFormatSymbols()
             symbols.groupingSeparator = ' '
-            formatter = DecimalFormat("0.00", symbols)
+
+            formatterForVotesPercentValue = DecimalFormat("0.00", symbols)
+
+            formatterForVotesAbsoluteValue = DecimalFormat("0", symbols)
+            formatterForVotesAbsoluteValue.isGroupingUsed = true
+            formatterForVotesAbsoluteValue.groupingSize = 3
+
+            formatterForMandatesPercentValue = DecimalFormat("0", symbols)
         }
     }
 

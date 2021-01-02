@@ -1,9 +1,7 @@
 package cz.vaclavtolar.volebnizavod.activity
 
+import android.graphics.Color
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -55,7 +53,7 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
 
         id = intent.getStringExtra(ELECTION_ID).toInt()
-        supportActionBar!!.setTitle(intent.getStringExtra(ELECTION_NAME))
+        name = intent.getStringExtra(ELECTION_NAME)
         year = intent.getIntExtra(ELECTION_YEAR, 0)
 
         if (year == 2013) {
@@ -78,6 +76,8 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
     override fun onStart() {
         super.onStart()
+        supportActionBar!!.setTitle(name)
+
         val callForElectionDetail: Call<ElectionData>? = id?.let {
             ServerService.getInstance().getElection(
                 it
@@ -119,8 +119,8 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
     private fun updateMainDataGui(response: Response<ElectionData>) {
 
-        findViewById<TextView>(R.id.counted).text = formatter.format(response.body()?.cr?.ucast?.okrskyzpracproc) + "%"
-        findViewById<TextView>(R.id.attendance).text = formatter.format(response.body()?.cr?.ucast?.ucastproc) + "%"
+        findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.okrskyzpracproc) + "%"
+        findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.ucastproc) + "%"
 
         findViewById<View>(R.id.counted_label).visibility = VISIBLE
         findViewById<View>(R.id.counted).visibility = VISIBLE
@@ -147,13 +147,16 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             val itemView: View = holder.itemView
             val partyNameTextView: TextView = itemView.findViewById(R.id.party_name)
             val strana = parties.get(position)
-            partyNameTextView.setText(strana.nazstr)
+            val party = partiesMap?.get(strana.kstrana)
+            partyNameTextView.setText(party?.abbr)
+            val partyMandatesPercent: TextView = itemView.findViewById(R.id.party_mandates_percent)
+            partyMandatesPercent.setText(formatterForMandatesPercentValue.format(strana.hodnotystrana?.procmandatu) + " % mandátů")
 
             val partyMandatesView: TextView =
                 itemView.findViewById(R.id.party_value)
             strana.hodnotystrana?.mandaty?.let { partyMandatesView.setText(it.toString()) }
 
-            val personsWrapper = itemView.findViewById<GridLayout>(R.id.persons_wrapper)
+            val personsWrapper = itemView.findViewById<ViewGroup>(R.id.persons_wrapper)
 
             val mandates = strana.hodnotystrana?.mandaty
             for (i in 1..mandates!!) {
@@ -163,8 +166,9 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
+                //imageView.setBackgroundColor(Color.CYAN)
                 val vector = VectorChildFinder(itemView.context, R.drawable.ic_baseline_person_36, imageView)
-                val party = partiesMap?.get(strana.kstrana)
+
                 vector.findPathByName("person").fillColor = party?.color!!
                 personsWrapper.addView(imageView)
             }
@@ -175,17 +179,8 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             return parties.size
         }
 
-        private fun getFormattedPercentValue(percentVotes: Double?): SpannableStringBuilder {
-
-            val formattedValue: String = formatter.format(percentVotes) + " %"
-            val spannableStringBuilder = SpannableStringBuilder(formattedValue)
-            spannableStringBuilder.setSpan(
-                RelativeSizeSpan(0.75f),
-                spannableStringBuilder.length - 4,
-                spannableStringBuilder.length - 1,
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE
-            )
-            return spannableStringBuilder
+        private fun getFormattedPercentValue(percentVotes: Double?): String {
+            return formatterForVotesPercentValue.format(percentVotes) + "%"
         }
 
         class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

@@ -53,7 +53,7 @@ object PartyMappings {
         14 to AKTIV_NEZAVISLYCH_OBCANU,
         15 to STRANA_PRAV_OBCANU,
         16 to OBCANE_2011,
-        17 to SPD,
+        17 to USVIT,
         18 to DSSS,
         // 19
         20 to ANO,
