@@ -43,7 +43,7 @@ enum class Party(val color: Int, val abbr: String? = null) {
     LEV21(Color.parseColor("#cccccc"),),
     KORUNA_CESKA(Color.parseColor("#cccccc"),),
     OBCANE_CZ(Color.parseColor("#cccccc"),),
-    VECI_VEREJNE(Color.parseColor("#00D7FF"),),
+    VECI_VEREJNE(Color.parseColor("#00D7FF"),"Věci veř."),
     KONZERVATIVNI_STRANA(Color.parseColor("#cccccc"),),
     STOP(Color.parseColor("#cccccc"),),
     EVROPSKY_STRED(Color.parseColor("#cccccc"),),

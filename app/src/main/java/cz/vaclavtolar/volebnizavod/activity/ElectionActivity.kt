@@ -47,6 +47,9 @@ open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         var intent: Intent? = null
         when (item.itemId) {
+            R.id.nav_home -> {
+                intent = Intent(this, MainActivity::class.java)
+            }
             R.id.nav_votes -> {
                 intent = Intent(this, VotesActivity::class.java).apply {
                     putExtra(Constants.ELECTION_ID, id.toString())

@@ -2,10 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <group>
+        <item
+            android:id="@+id/nav_home"
+            android:title="Hlavní menu"
+            />
+    </group>
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_votes"
-            android:title="Výsledky v procentech"
+            android:title="Získané hlasy"
         />
         <item
             android:id="@+id/nav_mandates"
