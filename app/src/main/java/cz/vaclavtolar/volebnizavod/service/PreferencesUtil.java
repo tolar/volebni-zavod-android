@@ -5,8 +5,15 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Optional;
+
 import cz.vaclavtolar.volebnizavod.R;
 import cz.vaclavtolar.volebnizavod.dto.CachedElectionData;
+import cz.vaclavtolar.volebnizavod.dto.ElectionData;
+import cz.vaclavtolar.volebnizavod.dto.ElectionDistrictData;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -24,10 +31,26 @@ public class PreferencesUtil {
         if (json != null) {
             return gson.fromJson(json, CachedElectionData.class);
         }
-        return null;
+        return new CachedElectionData();
     }
 
-    public static void storeDataToPreferences(Context context, CachedElectionData cachedElectionData) {
+    public static void updateDataToPreferences(Context context, Integer id, ElectionData electionData) {
+
+        CachedElectionData cachedElectionData = getDataFromPreferences(context);
+        cachedElectionData.getElectionsData().put(id, electionData);
+
+        savePreferences(context, cachedElectionData);
+    }
+
+
+    public static void updateDataToPreferences(Context context, Integer id, List<ElectionDistrictData> electionDistrictData) {
+        CachedElectionData cachedElectionData = getDataFromPreferences(context);
+        cachedElectionData.getElectionDistrictsData().put(id, electionDistrictData);
+
+        savePreferences(context, cachedElectionData);
+    }
+
+    private static void savePreferences(Context context, CachedElectionData cachedElectionData) {
         SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.preference_file_key), MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         Gson gson = new Gson();

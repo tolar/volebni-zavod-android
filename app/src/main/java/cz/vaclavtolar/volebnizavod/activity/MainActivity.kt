@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
         val cachedElectionData = PreferencesUtil.getDataFromPreferences(applicationContext)
-        if (cachedElectionData != null) {
+        if (cachedElectionData.elections != null) {
             electionsAdapter.elections = cachedElectionData.elections!!
             electionsAdapter.notifyDataSetChanged()
         }

@@ -106,6 +106,7 @@ class VotesActivity : ElectionActivity() {
                 updatePartiesAdapter(response.body())
                 updateCountiesMap(response.body())
                 updateMainDataGui(response.body())
+                PreferencesUtil.updateDataToPreferences(applicationContext, id, response.body())
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
@@ -131,6 +132,7 @@ class VotesActivity : ElectionActivity() {
             ) {
                 Log.d("srv_call", "Successfully got election districts from server")
                 updateDistrictMap(response.body())
+                PreferencesUtil.updateDataToPreferences(applicationContext, id, response.body())
                 //val cachedElectionDistrictsData = PreferencesUtil.getDataFromPreferences(applicationContext).electionDistrictsData?.get(id)
                 //id?.let { cachedElectionDistrictsData?.it, response.body()) }
             }
