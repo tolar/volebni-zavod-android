@@ -3,4 +3,5 @@
     <string name="border_text">Hranice pro vstup do sněmovny</string>
     <string name="nav_open_drawer">Otevřít menu</string>
     <string name="nav_close_drawer">Zavřít menu</string>
+    <string name="preference_file_key">elections_key</string>
 </resources>

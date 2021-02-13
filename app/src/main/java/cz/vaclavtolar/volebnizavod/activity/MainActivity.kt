@@ -15,6 +15,7 @@ import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.Election
+import cz.vaclavtolar.volebnizavod.service.PreferencesUtil
 import cz.vaclavtolar.volebnizavod.service.ServerService
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_YEAR
 import retrofit2.Call
@@ -56,6 +57,11 @@ class MainActivity : AppCompatActivity() {
                 Log.e("srv_call", "Failed to get elections from server", t)
             }
         })
+        val cachedElectionData = PreferencesUtil.getDataFromPreferences(applicationContext)
+        if (cachedElectionData != null) {
+            electionsAdapter.elections = cachedElectionData.elections!!
+            electionsAdapter.notifyDataSetChanged()
+        }
     }
 
     class ElectionsAdapter : RecyclerView.Adapter<ElectionsAdapter.ViewHolder>() {

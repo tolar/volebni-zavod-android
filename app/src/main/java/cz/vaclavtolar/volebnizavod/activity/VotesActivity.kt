@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.devs.vectorchildfinder.VectorChildFinder
 import com.google.android.material.navigation.NavigationView
 import cz.vaclavtolar.volebnizavod.R
+import cz.vaclavtolar.volebnizavod.dto.CachedElectionData
 import cz.vaclavtolar.volebnizavod.dto.ElectionData
 import cz.vaclavtolar.volebnizavod.dto.ElectionDistrictData
 import cz.vaclavtolar.volebnizavod.dto.Strana
+import cz.vaclavtolar.volebnizavod.service.PreferencesUtil
 import cz.vaclavtolar.volebnizavod.service.ServerService
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
@@ -101,15 +103,21 @@ class VotesActivity : ElectionActivity() {
                 response: Response<ElectionData>
             ) {
                 Log.d("srv_call", "Successfully got election detail from server")
-                updatePartiesAdapter(response)
-                updateCountiesMap(response)
-                updateMainDataGui(response)
+                updatePartiesAdapter(response.body())
+                updateCountiesMap(response.body())
+                updateMainDataGui(response.body())
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
                 Log.e("srv_call", "Failed to get election detail from server", t)
             }
         })
+
+        val electionsData = PreferencesUtil.getDataFromPreferences(applicationContext)?.electionsData?.get(id)
+        if (electionsData != null) {
+            updatePartiesAdapter(electionsData)
+            updateMainDataGui(electionsData)
+        }
 
         val callForElectionDistrict: Call<List<ElectionDistrictData>>? = id?.let {
             ServerService.getInstance().getElectionDistricts(
@@ -122,7 +130,9 @@ class VotesActivity : ElectionActivity() {
                 response: Response<List<ElectionDistrictData>>
             ) {
                 Log.d("srv_call", "Successfully got election districts from server")
-                updateDistrictMap(response)
+                updateDistrictMap(response.body())
+                //val cachedElectionDistrictsData = PreferencesUtil.getDataFromPreferences(applicationContext).electionDistrictsData?.get(id)
+                //id?.let { cachedElectionDistrictsData?.it, response.body()) }
             }
 
             override fun onFailure(call: Call<List<ElectionDistrictData>>, t: Throwable) {
@@ -130,11 +140,18 @@ class VotesActivity : ElectionActivity() {
             }
         })
 
+        val electionDistrictsData = PreferencesUtil.getDataFromPreferences(applicationContext)?.electionDistrictsData?.get(id)
+        if (electionDistrictsData != null) {
+            updateDistrictMap(electionDistrictsData)
+        }
+
+
+
 
     }
 
-    private fun updatePartiesAdapter(response: Response<ElectionData>) {
-        var parties = response.body()?.cr?.strana!!
+    private fun updatePartiesAdapter(electionData: ElectionData?) {
+        var parties = electionData?.cr?.strana!!
         parties =
             parties.sortedByDescending { it.nazstr }
                 .sortedByDescending { it.hodnotystrana?.prochlasu }
@@ -158,10 +175,10 @@ class VotesActivity : ElectionActivity() {
         restPartiesAdapter.notifyDataSetChanged()
     }
 
-    private fun updateCountiesMap(response: Response<ElectionData>) {
+    private fun updateCountiesMap(electionData: ElectionData?) {
         val imageView = findViewById<ImageView>(R.id.counties_map)
         val vector = VectorChildFinder(applicationContext, R.drawable.ic_cr_kraje, imageView)
-        response.body()?.kraj?.forEach {
+        electionData?.kraj?.forEach {
             val maxStrana = it.strana?.maxByOrNull { it.hodnotystrana?.prochlasu!! }
             val pathName = Mappings.CISKRAJ_TO_PATH[it.ciskraj]
             val party = partiesMap?.get(maxStrana?.kstrana)
@@ -172,10 +189,12 @@ class VotesActivity : ElectionActivity() {
         findViewById<View>(R.id.headline_counties).visibility = VISIBLE
     }
 
-    private fun updateDistrictMap(response: Response<List<ElectionDistrictData>>) {
+    private fun updateDistrictMap(
+        electionDistrictsData: List<ElectionDistrictData>?
+    ) {
         val imageView = findViewById<ImageView>(R.id.districts_map)
         val vector = VectorChildFinder(applicationContext, R.drawable.ic_cr_okresy, imageView)
-        response.body()?.forEach {
+        electionDistrictsData?.forEach {
             val maxStrana = it.okres?.hlasystrana?.maxByOrNull { it.prochlasu!! }
             var pathName = it.okres?.nutsokres
             var path = vector.findPathByName(pathName)
@@ -191,10 +210,12 @@ class VotesActivity : ElectionActivity() {
         findViewById<View>(R.id.districts_loading_info).visibility = GONE
     }
 
-    private fun updateMainDataGui(response: Response<ElectionData>) {
+    private fun updateMainDataGui(electionData: ElectionData?) {
 
-        findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.okrskyzpracproc) + "%"
-        findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.ucastproc) + "%"
+        findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(
+            electionData?.cr?.ucast?.okrskyzpracproc) + "%"
+        findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(
+            electionData?.cr?.ucast?.ucastproc) + "%"
 
         findViewById<View>(R.id.counted_label).visibility = VISIBLE
         findViewById<View>(R.id.counted).visibility = VISIBLE

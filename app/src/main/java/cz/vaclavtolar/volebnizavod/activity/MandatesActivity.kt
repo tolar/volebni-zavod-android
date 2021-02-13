@@ -16,6 +16,7 @@ import com.google.android.material.navigation.NavigationView
 import cz.vaclavtolar.volebnizavod.R
 import cz.vaclavtolar.volebnizavod.dto.ElectionData
 import cz.vaclavtolar.volebnizavod.dto.Strana
+import cz.vaclavtolar.volebnizavod.service.PreferencesUtil
 import cz.vaclavtolar.volebnizavod.service.ServerService
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
@@ -90,8 +91,8 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
                 response: Response<ElectionData>
             ) {
                 Log.d("srv_call", "Successfully got election detail from server")
-                updatePartiesAdapter(response)
-                updateMainDataGui(response)
+                updatePartiesAdapter(response.body())
+                updateMainDataGui(response.body())
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
@@ -99,12 +100,18 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             }
         })
 
+        val electionsData = PreferencesUtil.getDataFromPreferences(applicationContext)?.electionsData?.get(id)
+        if (electionsData != null) {
+            updatePartiesAdapter(electionsData)
+            updateMainDataGui(electionsData)
+        }
+
 
 
     }
 
-    private fun updatePartiesAdapter(response: Response<ElectionData>) {
-        var parties = response.body()?.cr?.strana!!
+    private fun updatePartiesAdapter(electionData: ElectionData?) {
+        var parties = electionData?.cr?.strana!!
         parties = parties.filter { it.hodnotystrana?.mandaty != null &&  it.hodnotystrana?.mandaty!! >= 1}
         parties =
             parties.sortedByDescending { it.nazstr }
@@ -118,10 +125,12 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
         partiesAdapter.notifyDataSetChanged()
     }
 
-    private fun updateMainDataGui(response: Response<ElectionData>) {
+    private fun updateMainDataGui(electionData: ElectionData?) {
 
-        findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.okrskyzpracproc) + "%"
-        findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(response.body()?.cr?.ucast?.ucastproc) + "%"
+        findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(
+            electionData?.cr?.ucast?.okrskyzpracproc) + "%"
+        findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(
+            electionData?.cr?.ucast?.ucastproc) + "%"
 
         findViewById<View>(R.id.counted_label).visibility = VISIBLE
         findViewById<View>(R.id.counted).visibility = VISIBLE

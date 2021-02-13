@@ -12,6 +12,7 @@ import retrofit2.http.Path;
 public interface ServerApi {
 
     String BASE_URL = "https://volebnizavod.herokuapp.com/api/v1/";
+    //String BASE_URL = "http://tolar:8080/api/v1/";
 
     @GET("elections")
     Call<List<Election>> getAllElections();
