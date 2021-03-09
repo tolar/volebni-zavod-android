@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("srv_call", "Failed to get elections from server", t)
             }
         })
-        val cachedElectionData = PreferencesUtil.getDataFromPreferences(applicationContext)
+        val cachedElectionData = PreferencesUtil.getElectionsFromPreferences(applicationContext)
         if (cachedElectionData != null) {
             electionsAdapter.elections = cachedElectionData.elections!!
             electionsAdapter.notifyDataSetChanged()

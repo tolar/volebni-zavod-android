@@ -100,7 +100,7 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             }
         })
 
-        val electionsData = PreferencesUtil.getDataFromPreferences(applicationContext)?.electionsData?.get(id)
+        val electionsData = PreferencesUtil.getElectionsDataFromPreferences(applicationContext)?.electionsData?.get(id)
         if (electionsData != null) {
             updatePartiesAdapter(electionsData)
             updateMainDataGui(electionsData)

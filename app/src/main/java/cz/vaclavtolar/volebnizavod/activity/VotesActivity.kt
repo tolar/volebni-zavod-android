@@ -1,5 +1,6 @@
 package cz.vaclavtolar.volebnizavod.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -18,10 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.devs.vectorchildfinder.VectorChildFinder
 import com.google.android.material.navigation.NavigationView
 import cz.vaclavtolar.volebnizavod.R
-import cz.vaclavtolar.volebnizavod.dto.CachedElectionData
-import cz.vaclavtolar.volebnizavod.dto.ElectionData
-import cz.vaclavtolar.volebnizavod.dto.ElectionDistrictData
-import cz.vaclavtolar.volebnizavod.dto.Strana
+import cz.vaclavtolar.volebnizavod.dto.*
 import cz.vaclavtolar.volebnizavod.service.PreferencesUtil
 import cz.vaclavtolar.volebnizavod.service.ServerService
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
@@ -106,6 +104,10 @@ class VotesActivity : ElectionActivity() {
                 updatePartiesAdapter(response.body())
                 updateCountiesMap(response.body())
                 updateMainDataGui(response.body())
+                PreferencesUtil.storeElectionsDataToPreferences(
+                    applicationContext,
+                    CachedElectionsData(response.body())
+                )
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
@@ -113,7 +115,10 @@ class VotesActivity : ElectionActivity() {
             }
         })
 
-        val electionsData = PreferencesUtil.getDataFromPreferences(applicationContext)?.electionsData?.get(id)
+        val electionsData =
+            PreferencesUtil.getElectionsDataFromPreferences(applicationContext)?.electionsData?.get(
+                id
+            )
         if (electionsData != null) {
             updatePartiesAdapter(electionsData)
             updateMainDataGui(electionsData)
@@ -131,8 +136,23 @@ class VotesActivity : ElectionActivity() {
             ) {
                 Log.d("srv_call", "Successfully got election districts from server")
                 updateDistrictMap(response.body())
-                //val cachedElectionDistrictsData = PreferencesUtil.getDataFromPreferences(applicationContext).electionDistrictsData?.get(id)
-                //id?.let { cachedElectionDistrictsData?.it, response.body()) }
+                val cachedElectionsDistrictsData =
+                    PreferencesUtil.getElectionsDistrictsDataFromPreferences(applicationContext)
+                if (cachedElectionsDistrictsData?.electionDistrictsData != null) {
+                    cachedElectionsDistrictsData?.electionDistrictsData?.put(
+                        id!!,
+                        response.body()!!
+                    )
+                    PreferencesUtil.storeElectionsDistrictsDataToPreferences(
+                        applicationContext,
+                        cachedElectionsDistrictsData
+                    )
+                } else {
+                    PreferencesUtil.storeElectionsDistrictsDataToPreferences(
+                        applicationContext,
+                        CachedElectionsDistrictsData(response.body())
+                    )
+                }
             }
 
             override fun onFailure(call: Call<List<ElectionDistrictData>>, t: Throwable) {
@@ -140,12 +160,13 @@ class VotesActivity : ElectionActivity() {
             }
         })
 
-        val electionDistrictsData = PreferencesUtil.getDataFromPreferences(applicationContext)?.electionDistrictsData?.get(id)
+        val electionDistrictsData =
+            PreferencesUtil.getElectionsDistrictsDataFromPreferences(applicationContext)?.electionDistrictsData?.get(
+                id
+            )
         if (electionDistrictsData != null) {
             updateDistrictMap(electionDistrictsData)
         }
-
-
 
 
     }
@@ -210,12 +231,15 @@ class VotesActivity : ElectionActivity() {
         findViewById<View>(R.id.districts_loading_info).visibility = GONE
     }
 
+    @SuppressLint("CutPasteId")
     private fun updateMainDataGui(electionData: ElectionData?) {
 
         findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(
-            electionData?.cr?.ucast?.okrskyzpracproc) + "%"
+            electionData?.cr?.ucast?.okrskyzpracproc
+        ) + "%"
         findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(
-            electionData?.cr?.ucast?.ucastproc) + "%"
+            electionData?.cr?.ucast?.ucastproc
+        ) + "%"
 
         findViewById<View>(R.id.counted_label).visibility = VISIBLE
         findViewById<View>(R.id.counted).visibility = VISIBLE
@@ -253,7 +277,8 @@ class VotesActivity : ElectionActivity() {
             partyNameTextView.text = partyName
 
             val partyVotesTextView: TextView = itemView.findViewById(R.id.party_votes)
-            partyVotesTextView.text = " - " + formatterForVotesAbsoluteValue.format(strana.hodnotystrana?.hlasy) + " hlasů"
+            partyVotesTextView.text =
+                " - " + formatterForVotesAbsoluteValue.format(strana.hodnotystrana?.hlasy) + " hlasů"
 
             val partyVotesPercentTextView: TextView =
                 itemView.findViewById(R.id.party_value)
@@ -293,7 +318,7 @@ class VotesActivity : ElectionActivity() {
 
     }
 
-    fun toggleMoreParties(view: View) {
+    fun toggleMoreParties() {
         val restPartiesView: View = findViewById(R.id.rest_parties_wrapper)
         val morePartiesBtn: Button = findViewById(R.id.more_parties_btn)
         val currentVisibility = restPartiesView.visibility
