@@ -247,7 +247,6 @@ class VotesActivity : ElectionActivity() {
         findViewById<View>(R.id.attendance).visibility = VISIBLE
 
         findViewById<View>(R.id.more_parties_btn).visibility = VISIBLE
-        findViewById<View>(R.id.districts_loading_info).visibility = VISIBLE
 
     }
 
@@ -318,7 +317,7 @@ class VotesActivity : ElectionActivity() {
 
     }
 
-    fun toggleMoreParties() {
+    fun toggleMoreParties(view: View) {
         val restPartiesView: View = findViewById(R.id.rest_parties_wrapper)
         val morePartiesBtn: Button = findViewById(R.id.more_parties_btn)
         val currentVisibility = restPartiesView.visibility
