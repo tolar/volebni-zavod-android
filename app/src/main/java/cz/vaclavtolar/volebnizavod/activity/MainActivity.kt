@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_ID
 import cz.vaclavtolar.volebnizavod.util.Constants.ELECTION_NAME
 import cz.vaclavtolar.volebnizavod.R
+import cz.vaclavtolar.volebnizavod.dto.CachedElections
 import cz.vaclavtolar.volebnizavod.dto.Election
 import cz.vaclavtolar.volebnizavod.service.PreferencesUtil
 import cz.vaclavtolar.volebnizavod.service.ServerService
@@ -22,7 +23,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ElectionActivity() {
+
 
     private lateinit var electionsAdapter: ElectionsAdapter
 
@@ -47,10 +49,11 @@ class MainActivity : AppCompatActivity() {
                 response: Response<List<Election>>
             ) {
                 Log.d("srv_call", "Successfully got elections from server")
-                electionsAdapter.elections = response.body()!!
-                electionsAdapter.elections =
-                    electionsAdapter.elections.sortedByDescending { it.date }
+                elections = response.body()!!
+                elections = elections.sortedByDescending { it.date }
+                electionsAdapter.elections = elections
                 electionsAdapter.notifyDataSetChanged()
+                PreferencesUtil.storeElectionsToPreferences(applicationContext, CachedElections(elections))
             }
 
             override fun onFailure(call: Call<List<Election>>, t: Throwable) {
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
         val cachedElectionData = PreferencesUtil.getElectionsFromPreferences(applicationContext)
-        if (cachedElectionData != null) {
+        if (cachedElectionData?.elections != null) {
             electionsAdapter.elections = cachedElectionData.elections!!
             electionsAdapter.notifyDataSetChanged()
         }

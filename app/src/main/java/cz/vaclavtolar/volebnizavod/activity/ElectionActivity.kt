@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import cz.vaclavtolar.volebnizavod.R
+import cz.vaclavtolar.volebnizavod.dto.Election
 import cz.vaclavtolar.volebnizavod.dto.Strana
 import cz.vaclavtolar.volebnizavod.util.Constants
 import cz.vaclavtolar.volebnizavod.util.Party
@@ -19,6 +20,8 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
 open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+
 
     protected var id: Int? = null
     protected var name: String? = null
@@ -29,6 +32,7 @@ open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         val formatterForVotesAbsoluteValue: DecimalFormat
         val formatterForMandatesPercentValue: DecimalFormat
         var partiesMap: Map<Int, Party>? = null
+        var elections: List<Election> = mutableListOf()
 
         init {
             val symbols = DecimalFormatSymbols()
@@ -50,18 +54,67 @@ open class ElectionActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             R.id.nav_home -> {
                 intent = Intent(this, MainActivity::class.java)
             }
-            R.id.nav_votes -> {
+
+            R.id.nav_votes_2017 -> {
                 intent = Intent(this, VotesActivity::class.java).apply {
-                    putExtra(Constants.ELECTION_ID, id.toString())
-                    putExtra(Constants.ELECTION_NAME, name)
-                    putExtra(Constants.ELECTION_YEAR, year)
+                    val election = elections.get(0)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
                 }}
-            R.id.nav_mandates -> {
+            R.id.nav_mandates_2017 -> {
                 intent = Intent(this, MandatesActivity::class.java).apply {
-                    putExtra(Constants.ELECTION_ID, id.toString())
-                    putExtra(Constants.ELECTION_NAME, name)
-                    putExtra(Constants.ELECTION_YEAR, year)
+                    val election = elections.get(0)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
                 }}
+
+            R.id.nav_votes_2013 -> {
+                intent = Intent(this, VotesActivity::class.java).apply {
+                    val election = elections.get(1)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
+                }}
+            R.id.nav_mandates_2013 -> {
+                intent = Intent(this, MandatesActivity::class.java).apply {
+                    val election = elections.get(1)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
+                }}
+
+            R.id.nav_votes_2010 -> {
+                intent = Intent(this, VotesActivity::class.java).apply {
+                    val election = elections.get(2)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
+                }}
+            R.id.nav_mandates_2010 -> {
+                intent = Intent(this, MandatesActivity::class.java).apply {
+                    val election = elections.get(2)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
+                }}
+
+            R.id.nav_votes_2006 -> {
+                intent = Intent(this, VotesActivity::class.java).apply {
+                    val election = elections.get(3)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
+                }}
+            R.id.nav_mandates_2006 -> {
+                intent = Intent(this, MandatesActivity::class.java).apply {
+                    val election = elections.get(3)
+                    putExtra(Constants.ELECTION_ID, election.id)
+                    putExtra(Constants.ELECTION_NAME, election.name)
+                    putExtra(Constants.ELECTION_YEAR, election.date?.year)
+                }}
+
         }
         if (intent != null) {
             startActivity(intent)

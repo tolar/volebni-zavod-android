@@ -106,7 +106,7 @@ class VotesActivity : ElectionActivity() {
                 updateMainDataGui(response.body())
                 PreferencesUtil.storeElectionsDataToPreferences(
                     applicationContext,
-                    CachedElectionsData(response.body())
+                    CachedElectionsData(mutableMapOf(id!! to response.body()))
                 )
             }
 
@@ -149,9 +149,7 @@ class VotesActivity : ElectionActivity() {
                     )
                 } else {
                     PreferencesUtil.storeElectionsDistrictsDataToPreferences(
-                        applicationContext,
-                        CachedElectionsDistrictsData(response.body())
-                    )
+                        applicationContext, CachedElectionsDistrictsData(mutableMapOf(id!! to response.body())))
                 }
             }
 
@@ -291,6 +289,8 @@ class VotesActivity : ElectionActivity() {
 
             if (strana.kstrana == lastPartyToSnemovna?.kstrana) {
                 itemView.findViewById<View>(R.id.border).visibility = VISIBLE
+            } else {
+                itemView.findViewById<View>(R.id.border).visibility = GONE
             }
 
 
