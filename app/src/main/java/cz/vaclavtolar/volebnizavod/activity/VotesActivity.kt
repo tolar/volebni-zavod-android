@@ -323,10 +323,10 @@ class VotesActivity : ElectionActivity() {
         val currentVisibility = restPartiesView.visibility
         if (currentVisibility == VISIBLE) {
             restPartiesView.visibility = GONE
-            morePartiesBtn.text = "Zobrazit další strany"
+            morePartiesBtn.text = getString(R.string.showFurtherParties)
         } else if (currentVisibility == INVISIBLE || currentVisibility == GONE) {
             restPartiesView.visibility = VISIBLE
-            morePartiesBtn.text = "Skrýt další strany"
+            morePartiesBtn.text = getString(R.string.hideFurtherParties)
         }
     }
 

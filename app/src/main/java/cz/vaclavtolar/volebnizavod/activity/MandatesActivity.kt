@@ -175,6 +175,7 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
                 -5f,
                 holder.itemView.context.resources.getDisplayMetrics()).roundToInt()
 
+            personsWrapper.removeAllViews()
             for (i in 1..mandates!!) {
                 val imageView = ImageView(itemView.context)
                 imageView.setImageResource(R.drawable.ic_baseline_person_36)
