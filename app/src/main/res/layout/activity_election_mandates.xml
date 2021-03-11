@@ -85,6 +85,53 @@
 
                 </RelativeLayout>
 
+                <TextView
+                    android:id="@+id/coalition_headline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Možné koalice"
+                    android:textColor="@color/blackText"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/parties_wrapper" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/coalition_parties"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    app:flexDirection="row"
+                    app:flexWrap="wrap"
+                    app:justifyContent="flex_start"
+                    app:alignContent="flex_start"
+                    app:showDivider="none"
+                    app:layout_constraintTop_toBottomOf="@id/coalition_headline"
+                    app:layout_constraintRight_toRightOf="parent"
+                    >
+
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/coalition"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    app:flexDirection="row"
+                    app:flexWrap="wrap"
+                    app:justifyContent="flex_start"
+                    app:alignContent="flex_start"
+                    app:showDivider="none"
+                    app:layout_constraintTop_toBottomOf="@id/coalition_parties"
+                    app:layout_constraintStart_toStartOf="parent"
+                    >
+
+                </com.google.android.flexbox.FlexboxLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 

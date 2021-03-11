@@ -101,9 +101,7 @@ class VotesActivity : ElectionActivity() {
                 response: Response<ElectionData>
             ) {
                 Log.d("srv_call", "Successfully got election detail from server")
-                updatePartiesAdapter(response.body())
-                updateCountiesMap(response.body())
-                updateMainDataGui(response.body())
+                updateGui(response.body())
                 PreferencesUtil.storeElectionsDataToPreferences(
                     applicationContext,
                     CachedElectionsData(mutableMapOf(id!! to response.body()))
@@ -120,8 +118,7 @@ class VotesActivity : ElectionActivity() {
                 id
             )
         if (electionsData != null) {
-            updatePartiesAdapter(electionsData)
-            updateMainDataGui(electionsData)
+            updateGui(electionsData)
         }
 
         val callForElectionDistrict: Call<List<ElectionDistrictData>>? = id?.let {
@@ -169,6 +166,8 @@ class VotesActivity : ElectionActivity() {
 
     }
 
+
+
     private fun updatePartiesAdapter(electionData: ElectionData?) {
         var parties = electionData?.cr?.strana!!
         parties =
@@ -192,6 +191,12 @@ class VotesActivity : ElectionActivity() {
 
         partiesAdapter.notifyDataSetChanged()
         restPartiesAdapter.notifyDataSetChanged()
+    }
+
+    private fun updateGui(electionData: ElectionData?) {
+        updatePartiesAdapter(electionData)
+        updateCountiesMap(electionData)
+        updateMainDataGui(electionData)
     }
 
     private fun updateCountiesMap(electionData: ElectionData?) {

@@ -1,6 +1,9 @@
 package cz.vaclavtolar.volebnizavod.activity
 
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
@@ -31,6 +34,40 @@ import kotlin.math.roundToInt
 class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var partiesAdapter: PartiesAdapter
+
+    companion object {
+        fun getPersonImageView(
+            context: Context,
+            displayMetrics: DisplayMetrics
+        ): Pair<ImageView, VectorChildFinder> {
+
+            val minus5dip:Int = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                -5f,
+                displayMetrics
+            ).roundToInt()
+
+            val imageView = ImageView(context)
+            imageView.setImageResource(R.drawable.ic_baseline_person_36)
+            val lp: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            imageView.minimumHeight = 0
+            imageView.minimumWidth = 0
+
+            lp.setMargins(minus5dip, minus5dip, 0, 0)
+            imageView.layoutParams = lp
+
+            val vector = VectorChildFinder(
+                context,
+                R.drawable.ic_baseline_person_36,
+                imageView
+            )
+            return Pair(imageView, vector)
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,8 +128,7 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
                 response: Response<ElectionData>
             ) {
                 Log.d("srv_call", "Successfully got election detail from server")
-                updatePartiesAdapter(response.body())
-                updateMainDataGui(response.body())
+                updateGui(response.body())
             }
 
             override fun onFailure(call: Call<ElectionData>, t: Throwable) {
@@ -100,22 +136,31 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             }
         })
 
-        val electionsData = PreferencesUtil.getElectionsDataFromPreferences(applicationContext)?.electionsData?.get(id)
+        val electionsData = PreferencesUtil.getElectionsDataFromPreferences(applicationContext)?.electionsData?.get(
+            id
+        )
         if (electionsData != null) {
-            updatePartiesAdapter(electionsData)
-            updateMainDataGui(electionsData)
+            updateGui(electionsData)
         }
 
 
 
     }
 
-    private fun updatePartiesAdapter(electionData: ElectionData?) {
+    private fun updateGui(electionData: ElectionData?) {
+
         var parties = electionData?.cr?.strana!!
         parties = parties.filter { it.hodnotystrana?.mandaty != null &&  it.hodnotystrana?.mandaty!! >= 1}
         parties =
             parties.sortedByDescending { it.nazstr }
                 .sortedByDescending { it.hodnotystrana?.mandaty }
+
+        updateHeader(electionData)
+        updatePartiesAdapter(parties)
+        updateCoalitions(parties)
+    }
+
+    private fun updatePartiesAdapter(parties: List<Strana>) {
         val maxMandates =
             parties.maxByOrNull { it.hodnotystrana?.mandaty!! }?.hodnotystrana?.mandaty
 
@@ -125,18 +170,44 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
         partiesAdapter.notifyDataSetChanged()
     }
 
-    private fun updateMainDataGui(electionData: ElectionData?) {
+    private fun updateHeader(electionData: ElectionData?) {
 
         findViewById<TextView>(R.id.counted).text = formatterForVotesPercentValue.format(
-            electionData?.cr?.ucast?.okrskyzpracproc) + "%"
+            electionData?.cr?.ucast?.okrskyzpracproc
+        ) + "%"
         findViewById<TextView>(R.id.attendance).text = formatterForVotesPercentValue.format(
-            electionData?.cr?.ucast?.ucastproc) + "%"
+            electionData?.cr?.ucast?.ucastproc
+        ) + "%"
 
         findViewById<View>(R.id.counted_label).visibility = VISIBLE
         findViewById<View>(R.id.counted).visibility = VISIBLE
         findViewById<View>(R.id.attendance_label).visibility = VISIBLE
         findViewById<View>(R.id.attendance).visibility = VISIBLE
 
+
+    }
+
+    private fun updateCoalitions(parties: List<Strana>) {
+        val coalitionPartiesView = findViewById<ViewGroup>(R.id.coalition_parties)
+        coalitionPartiesView.removeAllViews()
+        parties.forEach {
+            val partyToggle = ToggleButton(applicationContext)
+            val party = partiesMap?.get(it.kstrana)
+            partyToggle.text = party?.abbr
+            partyToggle.textOff = party?.abbr
+            partyToggle.textOn = party?.abbr
+
+            coalitionPartiesView.addView(partyToggle)
+        }
+
+        val coalition = findViewById<ViewGroup>(R.id.coalition)
+        coalition.removeAllViews()
+        for (i in 1 .. 200) {
+            val (imageView, vector) = getPersonImageView(applicationContext, resources.displayMetrics)
+
+            vector.findPathByName("person").fillColor = Color.LTGRAY
+            coalition.addView(imageView)
+        }
 
     }
 
@@ -170,32 +241,18 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
             val mandates = strana.hodnotystrana?.mandaty
 
-            val minus5dpPx:Int = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                -5f,
-                holder.itemView.context.resources.getDisplayMetrics()).roundToInt()
+
 
             personsWrapper.removeAllViews()
             for (i in 1..mandates!!) {
-                val imageView = ImageView(itemView.context)
-                imageView.setImageResource(R.drawable.ic_baseline_person_36)
-                val lp:LinearLayout.LayoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                imageView.minimumHeight = 0
-                imageView.minimumWidth = 0
-
-                lp.setMargins(minus5dpPx,minus5dpPx,0,0)
-                imageView.layoutParams = lp
-
-                val vector = VectorChildFinder(itemView.context, R.drawable.ic_baseline_person_36, imageView)
+                val (imageView, vector) = getPersonImageView(itemView.context, itemView.resources.displayMetrics)
 
                 vector.findPathByName("person").fillColor = party?.color!!
                 personsWrapper.addView(imageView)
             }
 
         }
+
 
         override fun getItemCount(): Int {
             return parties.size
@@ -221,6 +278,9 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             morePartiesBtn.text = "Skrýt další strany"
         }
     }
+
+
+
 
 
 }
