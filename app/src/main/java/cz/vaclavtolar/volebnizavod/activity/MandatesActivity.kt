@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.*
 import android.view.View.*
 import android.widget.*
+import android.widget.TableLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -34,14 +35,15 @@ import kotlin.math.roundToInt
 class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var partiesAdapter: PartiesAdapter
+    private var coalitionParties = mutableSetOf<Strana>()
 
     companion object {
-        fun getPersonImageView(
+        private fun getPersonImageView(
             context: Context,
             displayMetrics: DisplayMetrics
         ): Pair<ImageView, VectorChildFinder> {
 
-            val minus5dip:Int = TypedValue.applyDimension(
+            val minus5dipAsPixels:Int = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 -5f,
                 displayMetrics
@@ -56,7 +58,7 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             imageView.minimumHeight = 0
             imageView.minimumWidth = 0
 
-            lp.setMargins(minus5dip, minus5dip, 0, 0)
+            lp.setMargins(minus5dipAsPixels, minus5dipAsPixels, 0, 0)
             imageView.layoutParams = lp
 
             val vector = VectorChildFinder(
@@ -64,6 +66,7 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
                 R.drawable.ic_baseline_person_36,
                 imageView
             )
+
             return Pair(imageView, vector)
         }
 
@@ -157,7 +160,8 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
         updateHeader(electionData)
         updatePartiesAdapter(parties)
-        updateCoalitions(parties)
+        updateCoalitionParties(parties)
+        updateHouse()
     }
 
     private fun updatePartiesAdapter(parties: List<Strana>) {
@@ -187,28 +191,91 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
     }
 
-    private fun updateCoalitions(parties: List<Strana>) {
+    private fun updateCoalitionParties(parties: List<Strana>) {
         val coalitionPartiesView = findViewById<ViewGroup>(R.id.coalition_parties)
         coalitionPartiesView.removeAllViews()
         parties.forEach {
             val partyToggle = ToggleButton(applicationContext)
             val party = partiesMap?.get(it.kstrana)
+            val strana = it
             partyToggle.text = party?.abbr
             partyToggle.textOff = party?.abbr
             partyToggle.textOn = party?.abbr
-
+            partyToggle.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    coalitionParties.add(strana)
+                } else {
+                    coalitionParties.remove(strana)
+                }
+                updateHouse()
+            }
             coalitionPartiesView.addView(partyToggle)
         }
+    }
 
-        val coalition = findViewById<ViewGroup>(R.id.coalition)
-        coalition.removeAllViews()
-        for (i in 1 .. 200) {
-            val (imageView, vector) = getPersonImageView(applicationContext, resources.displayMetrics)
+    private fun updateHouse() {
+        val house = findViewById<ViewGroup>(R.id.house)
+        house.removeAllViews()
 
-            vector.findPathByName("person").fillColor = Color.LTGRAY
-            coalition.addView(imageView)
+        val sortedCoalitionParties = coalitionParties.sortedByDescending { it.hodnotystrana?.mandaty }
+        val mandateParty = mutableListOf<Strana>()
+        var prevPartiesMandates: Int = 0
+        sortedCoalitionParties.forEach {
+            for (i in 0 .. (it.hodnotystrana?.mandaty!! - 1)) {
+                mandateParty.add(prevPartiesMandates + i, it)
+            }
+            prevPartiesMandates = mandateParty.size
         }
 
+        for (i in 1 .. 10) {
+            val tableRow = TableRow(applicationContext)
+            tableRow.orientation = TableRow.VERTICAL
+            val tableRowParams = TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
+            )
+            tableRow.setLayoutParams(tableRowParams)
+
+            for (j in 1 .. 20) {
+                val (imageView, vector) = getPersonImageView(
+                    applicationContext,
+                    resources.displayMetrics,
+                )
+                imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                imageView.adjustViewBounds = true
+                val lp: LinearLayout.LayoutParams =
+                    TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        1F
+                    )
+                imageView.layoutParams = lp
+
+                var partyColor:Int? = Color.LTGRAY
+                val index = ((i-1) * 20 + j) - 1
+                if (index <= mandateParty.lastIndex) {
+                    partyColor = partiesMap?.get(mandateParty[index].kstrana)?.color
+                }
+
+                vector.findPathByName("person").fillColor = partyColor!!
+                tableRow.addView(imageView)
+            }
+            house.addView(tableRow)
+        }
+
+    }
+
+    fun toggleMoreParties(view: View) {
+        val restPartiesView: View = findViewById(R.id.rest_parties_wrapper)
+        val morePartiesBtn: Button = findViewById(R.id.more_parties_btn)
+        val currentVisibility = restPartiesView.visibility
+        if (currentVisibility == VISIBLE) {
+            restPartiesView.visibility = GONE
+            morePartiesBtn.text = "Zobrazit další strany"
+        } else if (currentVisibility == INVISIBLE || currentVisibility == GONE) {
+            restPartiesView.visibility = VISIBLE
+            morePartiesBtn.text = "Skrýt další strany"
+        }
     }
 
 
@@ -238,19 +305,18 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
             strana.hodnotystrana?.mandaty?.let { partyMandatesView.setText(it.toString()) }
 
             val personsWrapper = itemView.findViewById<ViewGroup>(R.id.persons_wrapper)
-
             val mandates = strana.hodnotystrana?.mandaty
-
-
 
             personsWrapper.removeAllViews()
             for (i in 1..mandates!!) {
-                val (imageView, vector) = getPersonImageView(itemView.context, itemView.resources.displayMetrics)
+                val (imageView, vector) = getPersonImageView(
+                    itemView.context,
+                    itemView.resources.displayMetrics
+                )
 
                 vector.findPathByName("person").fillColor = party?.color!!
                 personsWrapper.addView(imageView)
             }
-
         }
 
 
@@ -266,21 +332,10 @@ class MandatesActivity : ElectionActivity(), NavigationView.OnNavigationItemSele
 
     }
 
-    fun toggleMoreParties(view: View) {
-        val restPartiesView: View = findViewById(R.id.rest_parties_wrapper)
-        val morePartiesBtn: Button = findViewById(R.id.more_parties_btn)
-        val currentVisibility = restPartiesView.visibility
-        if (currentVisibility == VISIBLE) {
-            restPartiesView.visibility = GONE
-            morePartiesBtn.text = "Zobrazit další strany"
-        } else if (currentVisibility == INVISIBLE || currentVisibility == GONE) {
-            restPartiesView.visibility = VISIBLE
-            morePartiesBtn.text = "Skrýt další strany"
-        }
-    }
 
 
 
 
 
 }
+
